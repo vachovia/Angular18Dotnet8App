@@ -79,7 +79,7 @@ namespace Api.Controllers
             return Ok("Your account has been created, you can login.");
         }
 
-        // [Authorize]
+        [Authorize]
         [HttpGet("refresh-user-token")]
         public async Task<ActionResult<UserDto>> RefreshUserToken()
         {
