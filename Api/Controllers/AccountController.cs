@@ -47,7 +47,9 @@ namespace Api.Controllers
                 return Unauthorized("Invalid username or password.");
             }
 
-            return CreateAppUserDto(user);
+            var userDto = CreateAppUserDto(user);
+
+            return userDto;
         }
 
         [HttpPost("Register")]
@@ -76,7 +78,7 @@ namespace Api.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok("Your account has been created, you can login.");
+            return Ok(new JsonResult(new { title = "Account Created", message = "Your account has been created, you can login" }));
         }
 
         [Authorize]
@@ -106,9 +108,9 @@ namespace Api.Controllers
 
         private async Task<bool> CheckEmailExistsAsync(string email)
         {
-            var exists = await _userManager.Users.AnyAsync(u => u.Email == email.ToLower());
+            var isEmailFound = await _userManager.Users.AnyAsync(u => u.Email == email.ToLower());
 
-            return exists;
+            return isEmailFound;
         }
 
         #endregion
