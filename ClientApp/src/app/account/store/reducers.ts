@@ -61,6 +61,11 @@ const accountFeature = createFeature({
     on(routerNavigatedAction, (state, action) => ({
       ...state,
       validationErrors: null,
+    })),
+    on(accountActions.logout, (state) => ({
+      ...state,
+      ...initialState,
+      currentUser: null,
     }))
   ),
 });

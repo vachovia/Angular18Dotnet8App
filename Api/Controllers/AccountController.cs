@@ -59,7 +59,7 @@ namespace Api.Controllers
 
             if(exists)
             {
-                return BadRequest($"An existing account is {model.Email}, email address. Please try with anotheremail address.");
+                return BadRequest($"An existing account is using {model.Email} email address. Please try with another email address.");
             }
 
             var userToAdd = new AppUser

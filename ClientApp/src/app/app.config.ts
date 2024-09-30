@@ -9,6 +9,8 @@ import {provideEffects} from '@ngrx/effects'; // installed with K
 import {provideRouterStore, routerReducer} from '@ngrx/router-store'; // installed with K
 import * as accountEffects from './account/store/effects';
 import {accountFeatureKey, accountReducer} from './account/store/reducers';
+import * as playEffects from './play/store/effects';
+import {playFeatureKey, playReducer} from './play/store/reducers';
 
 import {BsModalService} from 'ngx-bootstrap/modal'; // installed with SV
 import {provideAnimations} from '@angular/platform-browser/animations'; // installed with SV
@@ -24,7 +26,7 @@ export const appConfig: ApplicationConfig = {
       router: routerReducer, // to clear Validation Errors after navigation
     }),
     provideRouterStore(),
-    provideEffects(accountEffects),
+    provideEffects(accountEffects, playEffects),
     provideStoreDevtools({
       maxAge: 25,
       logOnly: !isDevMode(),
@@ -33,6 +35,7 @@ export const appConfig: ApplicationConfig = {
       traceLimit: 75,
     }),
     provideState(accountFeatureKey, accountReducer),
+    provideState(playFeatureKey, playReducer),
 
     provideAnimations(),
     BsModalService,

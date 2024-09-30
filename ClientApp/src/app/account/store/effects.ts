@@ -1,9 +1,9 @@
 import {inject} from '@angular/core';
-import {ActivatedRoute, Params, Router} from '@angular/router';
+import {Router} from '@angular/router';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {switchMap, map, catchError, of, tap} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {UserInterface} from './../../shared/types/';
+import {BackendErrorsInterface, UserInterface} from './../../shared/types/';
 import {PersistanceService, SharedService} from './../../shared/services';
 import {AccountService} from './../services/account.service';
 import {accountActions} from './actions';
@@ -20,12 +20,9 @@ export const registerEffect = createEffect(
             return accountActions.registerSuccess();
           }),
           catchError((errorResponse: HttpErrorResponse) => {
-            let errorMessages = [];
-            if (errorResponse.error.errors) {
-              errorMessages = errorResponse.error.errors;
-            } else {
-              errorMessages.push(errorResponse.error);
-            }
+            let errorMessages: BackendErrorsInterface = {
+              [errorResponse.status]: [errorResponse.error],
+            };
             return of(
               accountActions.registerFailure({
                 errors: errorMessages,
@@ -66,9 +63,12 @@ export const loginEffect = createEffect(
             return accountActions.loginSuccess({currentUser});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              [errorResponse.status]: [errorResponse.error]
+            };            
             return of(
               accountActions.loginFailure({
-                errors: errorResponse.error.errors,
+                errors: errorMessages,
               })
             );
           })
@@ -79,17 +79,19 @@ export const loginEffect = createEffect(
   {functional: true}
 );
 
-export const redirectAfterLoginEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) => {
-    return actions$.pipe(
-      ofType(accountActions.loginSuccess),
-      tap(() => {
-        router.navigateByUrl('/');
-      })
-    );
-  },
-  {functional: true, dispatch: false}
-);
+/** Login Component listens User existence if  **/
+/** user exists then it navigates to home or by returnUrl **/
+// export const redirectAfterLoginEffect = createEffect(
+//   (actions$ = inject(Actions), router = inject(Router)) => {
+//     return actions$.pipe(
+//       ofType(accountActions.loginSuccess),
+//       tap(() => {
+//         router.navigateByUrl('/');
+//       })
+//     );
+//   },
+//   {functional: true, dispatch: false}
+// );
 
 export const getCurrentUserEffect = createEffect(
   (
@@ -119,14 +121,15 @@ export const getCurrentUserEffect = createEffect(
   {functional: true}
 );
 
-// export const redirectAfterGetCurrentUserFailedEffect = createEffect(
-//   (actions$ = inject(Actions), router = inject(Router)) => {
-//     return actions$.pipe(
-//       ofType(accountActions.getCurrentUserFailure),
-//       tap(() => {
-//         router.navigateByUrl('/login');
-//       })
-//     );
-//   },
-//   {functional: true, dispatch: false}
-// );
+export const logoutEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router), persistanceService = inject(PersistanceService)) => {
+    return actions$.pipe(
+      ofType(accountActions.logout),
+      tap(() => {
+        persistanceService.clear();
+        router.navigateByUrl('/');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
+);

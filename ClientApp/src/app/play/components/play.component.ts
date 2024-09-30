@@ -1,33 +1,27 @@
 import {Component, OnDestroy, OnInit} from '@angular/core';
-import { PlayService } from '../services/play.service';
-import {Subscription} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {CommonModule} from '@angular/common';
+import { Store } from '@ngrx/store';
+import {selectPlay, selectValidationErrors} from '../store/reducers';
+import { ValidationMessagesComponent } from '../../shared/components';
+import { playActions } from '../store/actions';
 
 @Component({
   selector: 'app-play',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, ValidationMessagesComponent],
   templateUrl: './play.component.html',
   styleUrl: './play.component.scss',
 })
-export class PlayComponent implements OnInit, OnDestroy {
-  sub?: Subscription;
-  message: string | undefined;
+export class PlayComponent implements OnInit {
+  data$ = combineLatest({
+    play: this.store.select(selectPlay),
+    backendErrors: this.store.select(selectValidationErrors),
+  });
 
-  constructor(private playService: PlayService) {}
+  constructor(private store: Store) {}
 
   ngOnInit(): void {
-    this.getPlayers();
-  }
-
-  getPlayers() {
-    this.sub = this.playService.getPlayers().subscribe({
-      next: (response: any) => (this.message = response.value.message),
-      error: (error:any) => console.log(error),
-    });
-  }
-
-  ngOnDestroy(): void {
-    this.sub?.unsubscribe();
+    this.store.dispatch(playActions.play());
   }
 }

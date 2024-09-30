@@ -1,6 +1,10 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
+import { selectCurrentUser, selectIsLoading } from '../../../account/store/reducers';
+import { combineLatest } from 'rxjs';
+import { Store } from '@ngrx/store';
+import { accountActions } from '../../../account/store/actions';
 
 @Component({
   selector: 'app-navbar',
@@ -10,6 +14,14 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
- 
-  logout() {}
+  data$ = combineLatest({
+    isLoading: this.store.select(selectIsLoading),
+    currentUser: this.store.select(selectCurrentUser),
+  });
+
+  constructor(private store: Store) {}
+
+  logout() {
+    this.store.dispatch(accountActions.logout());
+  }
 }
