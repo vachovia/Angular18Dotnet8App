@@ -7,8 +7,10 @@ import {provideStoreDevtools} from '@ngrx/store-devtools'; // installed with K
 import {provideHttpClient, withInterceptors} from '@angular/common/http'; // installed with K
 import {provideEffects} from '@ngrx/effects'; // installed with K
 import {provideRouterStore, routerReducer} from '@ngrx/router-store'; // installed with K
+
 import * as accountEffects from './account/store/effects';
 import {accountFeatureKey, accountReducer} from './account/store/reducers';
+
 import * as playEffects from './play/store/effects';
 import {playFeatureKey, playReducer} from './play/store/reducers';
 

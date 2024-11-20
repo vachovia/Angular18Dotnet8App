@@ -1,11 +1,15 @@
 ﻿using Api.DTOs.Account;
 using Api.Models;
-using Api.Services;
+using Api.Services.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using System;
 using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 
 namespace Api.Controllers
@@ -14,15 +18,19 @@ namespace Api.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IConfiguration _config;
         private readonly IJwtService _jwtService;
-        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IEmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
+        private readonly SignInManager<AppUser> _signInManager;        
 
-        public AccountController(IJwtService jwtService, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager)
+        public AccountController(IJwtService jwtService, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailService emailService, IConfiguration config)
         {
+            _config = config;
             _jwtService = jwtService;
             _signInManager = signInManager;
             _userManager = userManager;
+            _emailService = emailService;
         }
 
         [HttpPost("Login")]
@@ -68,7 +76,7 @@ namespace Api.Controllers
                 LastName = model.LastName.ToLower(),
                 UserName = model.Email.ToLower(),
                 Email = model.Email.ToLower(),
-                EmailConfirmed = true // to remove
+                // EmailConfirmed = true // to remove after adding email confirmation logic
             };
 
             var result = await _userManager.CreateAsync(userToAdd, model.Password);            
@@ -78,7 +86,24 @@ namespace Api.Controllers
                 return BadRequest(result.Errors);
             }
 
-            return Ok(new JsonResult(new { title = "Account Created", message = "Your account has been created, you can login" }));
+            // Added to confirm email address
+            try
+            {
+                var emailSent = await SendConfirmEmailAsync(userToAdd);
+
+                if (emailSent)
+                {
+                    return Ok(new JsonResult(new { title = "Account Created", message = "Your account has been created, please confirm your email address." }));
+                }
+
+                return BadRequest("Failed to send email. Please contact admin.");
+            }
+            catch(Exception)
+            {
+                return BadRequest("Failed to send email. Please contact admin.");
+            }
+
+            // return Ok(new JsonResult(new { title = "Account Created", message = "Your account has been created, you can login." }));
         }
 
         [Authorize]
@@ -111,6 +136,29 @@ namespace Api.Controllers
             var isEmailFound = await _userManager.Users.AnyAsync(u => u.Email == email.ToLower());
 
             return isEmailFound;
+        }
+
+        private async Task<bool> SendConfirmEmailAsync(AppUser user)
+        {
+            var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            token = WebEncoders.Base64UrlEncode(Encoding.UTF8.GetBytes(token));
+
+            var appUrl = _config["Jwt:ClientUrl"];
+            var appName = _config["Jwt:ApplicationName"];
+            var emailPath = _config["Email:ConfirmEmailPath"];            
+
+            var url = $"{appUrl}/{emailPath}?token={token}&email={user.Email}";
+
+            var body = $"<p>Hello {user.FirstName} {user.LastName}</p>" +
+                       "<p>Please confirm your email address by clicking on the following link</p>" +
+                       $"<p><a href=\"{url}\">Click here</a></p>" +
+                       "<p>Thank you,</p>" +
+                       $"<br/>{appName}";
+
+            var emailSendDto = new EmailSendDto(user.Email, "Confirm your email", body);
+
+            return await _emailService.SendAsync(emailSendDto);
         }
 
         #endregion

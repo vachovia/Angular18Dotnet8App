@@ -2,7 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ValidationMessagesComponent} from './../../../shared/components';
 import {CommonModule} from '@angular/common';
-import {combineLatest, Subscription} from 'rxjs';
+import {combineLatest} from 'rxjs';
 import {RegisterInterface} from '../../types';
 import {Store} from '@ngrx/store';
 import {accountActions} from './../../store/actions';

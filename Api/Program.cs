@@ -13,6 +13,8 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Linq;
 using Microsoft.AspNetCore.Mvc;
+using Api.Services.Interfaces;
+using Api.Settings;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +29,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 });
 
 builder.Services.AddScoped<IJwtService, JwtService>();
+builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTPBrevo"));
 
 builder.Services.AddIdentityCore<AppUser>(options =>
 {

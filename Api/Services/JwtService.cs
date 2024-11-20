@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
+using Api.Services.Interfaces;
 
 namespace Api.Services
 {
@@ -17,7 +18,6 @@ namespace Api.Services
         public JwtService(IConfiguration config)
         {
             _config = config;
-            // _jwtKey used for encripting and decripting the Jwt token
             _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         }
 

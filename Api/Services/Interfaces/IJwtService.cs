@@ -1,6 +1,6 @@
 ﻿using Api.Models;
 
-namespace Api.Services
+namespace Api.Services.Interfaces
 {
     public interface IJwtService
     {

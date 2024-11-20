@@ -18,4 +18,3 @@ namespace Api.Models
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
     }
 }
-//(ErrorMessage = "Please provide the first name")[StringLength(250, MinimumLength = 10)][Range(0, int.MaxValue)]
