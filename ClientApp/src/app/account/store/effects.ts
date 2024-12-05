@@ -7,7 +7,7 @@ import {BackendErrorsInterface, UserInterface} from './../../shared/types/';
 import {PersistanceService, SharedService} from './../../shared/services';
 import {AccountService} from './../services/account.service';
 import {accountActions} from './actions';
-import {RegisterResponseInterface} from './../types';
+import {BackendResponseInterface} from './../types';
 
 export const registerEffect = createEffect(
   (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
@@ -15,13 +15,14 @@ export const registerEffect = createEffect(
       ofType(accountActions.register),
       switchMap(({request}) => {
         return accountService.register(request).pipe(
-          map((response: RegisterResponseInterface) => {
+          map((response: BackendResponseInterface) => {
             sharedService.showNotification(true, response.value.title, response.value.message);
             return accountActions.registerSuccess();
           }),
           catchError((errorResponse: HttpErrorResponse) => {
             let errorMessages: BackendErrorsInterface = {
-              [errorResponse.status]: [errorResponse.error],
+              status: errorResponse.status,
+              message: errorResponse.error,
             };
             return of(
               accountActions.registerFailure({
@@ -36,17 +37,17 @@ export const registerEffect = createEffect(
   {functional: true}
 );
 
-export const redirectAfterRegisterEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) => {
-    return actions$.pipe(
-      ofType(accountActions.registerSuccess),
-      tap(() => {
-        router.navigateByUrl('/login');
-      })
-    );
-  },
-  {functional: true, dispatch: false}
-);
+// export const redirectAfterRegisterEffect = createEffect(
+//   (actions$ = inject(Actions), router = inject(Router)) => {
+//     return actions$.pipe(
+//       ofType(accountActions.registerSuccess),
+//       tap(() => {
+//         router.navigateByUrl('/login');
+//       })
+//     );
+//   },
+//   {functional: true, dispatch: false}
+// );
 
 export const loginEffect = createEffect(
   (
@@ -64,7 +65,8 @@ export const loginEffect = createEffect(
           }),
           catchError((errorResponse: HttpErrorResponse) => {
             let errorMessages: BackendErrorsInterface = {
-              [errorResponse.status]: [errorResponse.error]
+              status: errorResponse.status,
+              message: errorResponse.error,
             };            
             return of(
               accountActions.loginFailure({
@@ -119,6 +121,76 @@ export const getCurrentUserEffect = createEffect(
     );
   },
   {functional: true}
+);
+
+export const confirmEmailEffect = createEffect(
+  (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
+    return actions$.pipe(
+      ofType(accountActions.confirmEmail),
+      switchMap(({request}) => {
+        return accountService.confirmEmail(request).pipe(
+          map((response: BackendResponseInterface) => {
+            sharedService.showNotification(true, response.value.title, response.value.message);
+            return accountActions.confirmEmailSuccess();
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };
+            sharedService.showNotification(false, 'Failed', errorResponse.error);
+            return of(
+              accountActions.confirmEmailFailure({
+                errors: errorMessages,
+              })
+            );
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const resendEmailConfirmationEffect = createEffect(
+  (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
+    return actions$.pipe(
+      ofType(accountActions.resendEmailConfiramtion),
+      switchMap(({request}) => {
+        return accountService.resendEmailConfirmationLink(request).pipe(
+          map((response: BackendResponseInterface) => {
+            sharedService.showNotification(true, response.value.title, response.value.message);
+            return accountActions.resendEmailConfiramtionSuccess();
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };
+            sharedService.showNotification(false, 'Failed', errorResponse.error);
+            return of(
+              accountActions.resendEmailConfiramtionFailure({
+                errors: errorMessages,
+              })
+            );
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const redirectAfterResendEmailConfirmationEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(accountActions.resendEmailConfiramtionSuccess),
+      tap(() => {
+        router.navigateByUrl('/login');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
 );
 
 export const logoutEffect = createEffect(

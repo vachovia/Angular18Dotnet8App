@@ -19,13 +19,17 @@ export const registerEffect = createEffect(
             sharedService.showNotification(true, '', response.value.message);
             return playActions.playSuccess({play: response});
           }),
-          catchError((errorResponse: HttpErrorResponse) => {            
-            let errorMessages: BackendErrorsInterface = {};
+          catchError((errorResponse: HttpErrorResponse) => {
+            let message;
             if (errorResponse.error && errorResponse.error.errors) {
-              errorMessages = errorResponse.error.errors;
+              message = errorResponse.error.errors;
             } else {
-              errorMessages = errorResponse.error;
+              message = errorResponse.error;
             }
+            const errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };           
             sharedService.showNotification(false, 'Restricted Area', 'Please Login.');
             return of(
               playActions.playFailure({

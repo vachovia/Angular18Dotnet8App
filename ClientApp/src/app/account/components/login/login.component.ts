@@ -66,6 +66,10 @@ export class LoginComponent implements OnInit, OnDestroy {
     }
   }
 
+  resendEmailConfirmationLink(): void {
+    this.router.navigateByUrl('/send-email/resend-email-confirmation-link');
+  }
+
   ngOnDestroy(): void {
     this.currentUserSubscription?.unsubscribe();
   }

@@ -58,14 +58,42 @@ const accountFeature = createFeature({
       isLoading: false,
       currentUser: null,
     })),
-    on(routerNavigatedAction, (state, action) => ({
+    on(accountActions.confirmEmail, (state) => ({
       ...state,
+      isLoading: true,
       validationErrors: null,
+    })),
+    on(accountActions.confirmEmailSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+    })),
+    on(accountActions.confirmEmailFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      validationErrors: action.errors,
+    })),
+    on(accountActions.resendEmailConfiramtion, (state) => ({
+      ...state,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(accountActions.resendEmailConfiramtionSuccess, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+    })),
+    on(accountActions.resendEmailConfiramtionFailure, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      validationErrors: action.errors,
     })),
     on(accountActions.logout, (state) => ({
       ...state,
       ...initialState,
       currentUser: null,
+    })),
+    on(routerNavigatedAction, (state, action) => ({
+      ...state,
+      validationErrors: null,
     }))
   ),
 });

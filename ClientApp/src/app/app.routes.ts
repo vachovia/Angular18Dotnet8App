@@ -15,6 +15,10 @@ export const routes: Routes = [
     loadChildren: () => import('./account/account.routes').then((m) => m.confirmEmailRoutes),
   },
   {
+    path: 'send-email/:mode',
+    loadChildren: () => import('./account/account.routes').then((m) => m.sendEmailRoutes),
+  },
+  {
     path: '',
     loadChildren: () => import('./home/home.routes').then((m) => m.homeRoutes),
   },

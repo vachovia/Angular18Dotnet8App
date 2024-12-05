@@ -3,7 +3,7 @@ import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {UserInterface} from './../../shared/types';
-import {LoginInterface, RegisterInterface, RegisterResponseInterface} from './../types';
+import {LoginInterface, RegisterInterface, BackendResponseInterface, ConfirmEmailInterface} from './../types';
 import {PersistanceService} from './../../shared/services';
 import {environment} from './../../../environments/environment.development';
 
@@ -22,9 +22,9 @@ export class AccountService {
     return this.http.get<UserInterface>(url).pipe(map(this.getUser));
   }
 
-  register(data: RegisterInterface): Observable<RegisterResponseInterface> {
+  register(data: RegisterInterface): Observable<BackendResponseInterface> {
     const url = `${this.appUrl}/api/account/register`;
-    return this.http.post<RegisterResponseInterface>(url, data);
+    return this.http.post<BackendResponseInterface>(url, data);
   }
 
   login(data: LoginInterface): Observable<UserInterface> {
@@ -34,6 +34,16 @@ export class AccountService {
 
   getUser(response: UserInterface): UserInterface {
     return response;
+  }
+
+  confirmEmail(data: ConfirmEmailInterface): Observable<BackendResponseInterface> {
+    const url = `${this.appUrl}/api/account/confirm-email`;
+    return this.http.put<BackendResponseInterface>(url, data);
+  }
+
+  resendEmailConfirmationLink(email: string): Observable<BackendResponseInterface> {
+    const url = `${this.appUrl}/api/account/resend-email-confirmation-link/${email}`;
+    return this.http.post<BackendResponseInterface>(url,{});
   }
 
   logout() {

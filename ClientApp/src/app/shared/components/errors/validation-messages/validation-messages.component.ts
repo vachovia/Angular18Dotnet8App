@@ -10,13 +10,11 @@ import { CommonModule } from '@angular/common';
   styleUrl: './validation-messages.component.scss',
 })
 export class ValidationMessagesComponent implements OnInit {
-  @Input() backendErrors: BackendErrorsInterface = {};
+  @Input() backendErrors: BackendErrorsInterface | null = null;
   errorMessages: string[] = [];
 
   ngOnInit(): void {
-    this.errorMessages = Object.keys(this.backendErrors).map((name: string) => {
-      const messages = this.backendErrors[name].join(' ');
-      return `Status ${name}: ${messages}`;
-    });
+    this.errorMessages.push(`Status: ${this.backendErrors?.status}` );
+    this.errorMessages.push(`Error: ${this.backendErrors?.message}` );    
   }
 }
