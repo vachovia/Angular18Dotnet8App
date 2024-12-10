@@ -37,17 +37,17 @@ export const registerEffect = createEffect(
   {functional: true}
 );
 
-// export const redirectAfterRegisterEffect = createEffect(
-//   (actions$ = inject(Actions), router = inject(Router)) => {
-//     return actions$.pipe(
-//       ofType(accountActions.registerSuccess),
-//       tap(() => {
-//         router.navigateByUrl('/login');
-//       })
-//     );
-//   },
-//   {functional: true, dispatch: false}
-// );
+export const redirectAfterRegisterEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(accountActions.registerSuccess),
+      tap(() => {
+        router.navigateByUrl('/');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
+);
 
 export const loginEffect = createEffect(
   (
@@ -186,7 +186,7 @@ export const redirectAfterResendEmailConfirmationEffect = createEffect(
     return actions$.pipe(
       ofType(accountActions.resendEmailConfiramtionSuccess),
       tap(() => {
-        router.navigateByUrl('/login');
+        router.navigateByUrl('/');
       })
     );
   },
