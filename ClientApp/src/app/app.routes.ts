@@ -19,6 +19,10 @@ export const routes: Routes = [
     loadChildren: () => import('./account/account.routes').then((m) => m.sendEmailRoutes),
   },
   {
+    path: 'reset-password',
+    loadChildren: () => import('./account/account.routes').then((m) => m.resetPasswordRoutes),
+  },
+  {
     path: '',
     loadChildren: () => import('./home/home.routes').then((m) => m.homeRoutes),
   },

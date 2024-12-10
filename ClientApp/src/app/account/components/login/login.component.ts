@@ -7,13 +7,13 @@ import {combineLatest, Subscription} from 'rxjs';
 import {selectCurrentUser, selectIsSubmitting, selectValidationErrors} from './../../store/reducers';
 import {LoginInterface} from '../../types';
 import {accountActions} from '../../store/actions';
-import {ActivatedRoute, Params, Router} from '@angular/router';
+import {ActivatedRoute, Params, Router, RouterLink} from '@angular/router';
 import {UserInterface} from '../../../shared/types';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule, ValidationMessagesComponent],
+  imports: [ReactiveFormsModule, CommonModule, ValidationMessagesComponent, RouterLink],
   templateUrl: './login.component.html',
   styleUrl: './login.component.scss',
 })
@@ -69,6 +69,10 @@ export class LoginComponent implements OnInit, OnDestroy {
   resendEmailConfirmationLink(): void {
     this.router.navigateByUrl('/send-email/resend-email-confirmation-link');
   }
+
+  forgotUsernameOrPassword(): void{
+    this.router.navigateByUrl('/send-email/forgot-username-or-password');
+  };
 
   ngOnDestroy(): void {
     this.currentUserSubscription?.unsubscribe();

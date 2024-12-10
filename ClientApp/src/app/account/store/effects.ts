@@ -81,20 +81,6 @@ export const loginEffect = createEffect(
   {functional: true}
 );
 
-/** Login Component listens User existence if  **/
-/** user exists then it navigates to home or by returnUrl **/
-// export const redirectAfterLoginEffect = createEffect(
-//   (actions$ = inject(Actions), router = inject(Router)) => {
-//     return actions$.pipe(
-//       ofType(accountActions.loginSuccess),
-//       tap(() => {
-//         router.navigateByUrl('/');
-//       })
-//     );
-//   },
-//   {functional: true, dispatch: false}
-// );
-
 export const getCurrentUserEffect = createEffect(
   (
     actions$ = inject(Actions),
@@ -187,6 +173,88 @@ export const redirectAfterResendEmailConfirmationEffect = createEffect(
       ofType(accountActions.resendEmailConfiramtionSuccess),
       tap(() => {
         router.navigateByUrl('/');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
+);
+
+export const forgotUsernameOrPasswordEffect = createEffect(
+  (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
+    return actions$.pipe(
+      ofType(accountActions.forgotUsernameOrPassword),
+      switchMap(({request}) => {
+        return accountService.forgotUsernameOrPassword(request).pipe(
+          map((response: BackendResponseInterface) => {
+            sharedService.showNotification(true, response.value.title, response.value.message);
+            return accountActions.forgotUsernameOrPasswordSuccess();
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };
+            sharedService.showNotification(false, 'Failed', errorResponse.error);
+            return of(
+              accountActions.forgotUsernameOrPasswordFailure({
+                errors: errorMessages,
+              })
+            );
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const redirectAfterForgotUsernameOrPasswordEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(accountActions.forgotUsernameOrPasswordSuccess),
+      tap(() => {
+        router.navigateByUrl('/login');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
+);
+
+export const resetPasswordEffect = createEffect(
+  (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
+    return actions$.pipe(
+      ofType(accountActions.resetPassword),
+      switchMap(({request}) => {
+        return accountService.resetPassword(request).pipe(
+          map((response: BackendResponseInterface) => {
+            sharedService.showNotification(true, response.value.title, response.value.message);
+            return accountActions.resetPasswordSuccess();
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };
+            sharedService.showNotification(false, 'Failed', errorResponse.error);
+            return of(
+              accountActions.resetPasswordFailure({
+                errors: errorMessages,
+              })
+            );
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const redirectAfterResetPasswordEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(accountActions.resetPasswordSuccess),
+      tap(() => {
+        router.navigateByUrl('/login');
       })
     );
   },

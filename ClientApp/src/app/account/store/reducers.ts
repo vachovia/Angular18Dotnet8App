@@ -86,6 +86,34 @@ const accountFeature = createFeature({
       isSubmitting: false,
       validationErrors: action.errors,
     })),
+    on(accountActions.forgotUsernameOrPassword, (state) => ({
+      ...state,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(accountActions.forgotUsernameOrPasswordSuccess, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+    })),
+    on(accountActions.forgotUsernameOrPasswordFailure, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
+    on(accountActions.resetPassword, (state) => ({
+      ...state,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(accountActions.resetPasswordSuccess, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+    })),
+    on(accountActions.resendEmailConfiramtionFailure, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
     on(accountActions.logout, (state) => ({
       ...state,
       ...initialState,

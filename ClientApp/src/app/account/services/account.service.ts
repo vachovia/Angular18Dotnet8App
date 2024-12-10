@@ -3,7 +3,13 @@ import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {UserInterface} from './../../shared/types';
-import {LoginInterface, RegisterInterface, BackendResponseInterface, ConfirmEmailInterface} from './../types';
+import {
+  LoginInterface,
+  RegisterInterface,
+  BackendResponseInterface,
+  ConfirmEmailInterface,
+  ResetPasswordInterface,
+} from './../types';
 import {PersistanceService} from './../../shared/services';
 import {environment} from './../../../environments/environment.development';
 
@@ -43,7 +49,17 @@ export class AccountService {
 
   resendEmailConfirmationLink(email: string): Observable<BackendResponseInterface> {
     const url = `${this.appUrl}/api/account/resend-email-confirmation-link/${email}`;
-    return this.http.post<BackendResponseInterface>(url,{});
+    return this.http.post<BackendResponseInterface>(url, {});
+  }
+
+  forgotUsernameOrPassword(email: string): Observable<BackendResponseInterface> {
+    const url = `${this.appUrl}/api/account/forgot-username-or-password/${email}`;
+    return this.http.post<BackendResponseInterface>(url, {});
+  }
+
+  resetPassword(data: ResetPasswordInterface): Observable<BackendResponseInterface> {
+    const url = `${this.appUrl}/api/account/reset-password`;
+    return this.http.put<BackendResponseInterface>(url, data);
   }
 
   logout() {

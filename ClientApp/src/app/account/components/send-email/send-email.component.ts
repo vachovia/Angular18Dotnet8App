@@ -64,6 +64,9 @@ export class SendEmailComponent implements OnInit, OnDestroy {
       if (this.mode === 'resend-email-confirmation-link') {
         this.submitted = true;
         this.store.dispatch(accountActions.resendEmailConfiramtion({request: email}));
+      } else if (this.mode === 'forgot-username-or-password') {
+        this.submitted = true;
+        this.store.dispatch(accountActions.forgotUsernameOrPassword({request: email}));
       }
     }
   }
