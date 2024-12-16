@@ -16,3 +16,8 @@ this.route.queryParamMap.subscribe({
     const token = params['token'];
     },
 });
+
+// we need https to enable facebook login
+choco install mkcert
+// then this in ssl folder
+mkcert localhost
