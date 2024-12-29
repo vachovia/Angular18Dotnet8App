@@ -1,6 +1,7 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, signal} from '@angular/core';
 import {Store} from '@ngrx/store';
 import {selectQueryParam} from '../../shared/store/router.reducer';
+signal
 
 @Component({
   selector: 'app-home',
@@ -15,7 +16,15 @@ export class HomeComponent implements OnInit {
   returnUrl$ = this.store.select(selectQueryParam('returnUrl'));
   sub = this.returnUrl$.subscribe((p) => console.log(p));
 
-  ngOnInit() {
-    
+  counter = signal(0);
+
+  ngOnInit() {}
+
+  increment() {
+    this.counter.set(this.counter() + 1);
+  }
+
+  decrement() {
+    this.counter.set(this.counter() - 1);
   }
 }

@@ -1,9 +1,8 @@
-import {Component, OnDestroy, OnInit} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {RouterOutlet} from '@angular/router';
 import {FooterComponent, NavbarComponent} from './shared/components';
-import { Subscription } from 'rxjs';
-import { Store } from '@ngrx/store';
-import { accountActions } from './account/store/actions';
+import {Store} from '@ngrx/store';
+import {accountActions} from './account/store/actions';
 
 @Component({
   selector: 'app-root',
@@ -13,7 +12,6 @@ import { accountActions } from './account/store/actions';
   styleUrl: './app.component.scss',
 })
 export class AppComponent implements OnInit {
-
   constructor(private store: Store) {}
 
   ngOnInit(): void {
