@@ -146,3 +146,8 @@ catch(Exception ex)
 #endregion
 
 app.Run();
+
+
+// Add-Migration AddingUserToDatabase -o Data/Migrations
+// Update-Database
+// Drop-Database
