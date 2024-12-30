@@ -15,6 +15,9 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Api.Services.Interfaces;
 using Api.Settings;
+using Microsoft.Extensions.Logging;
+using Api;
+using System.Security.Claims;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -30,6 +33,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddScoped<IJwtService, JwtService>();
 builder.Services.AddScoped<IEmailService, EmailService>();
+builder.Services.AddScoped<IContextSeedService, ContextSeedService>();
+
 builder.Services.Configure<SmtpSettings>(builder.Configuration.GetSection("SMTPBrevo"));
 
 builder.Services.AddIdentityCore<AppUser>(options =>
@@ -87,6 +92,22 @@ builder.Services.Configure<ApiBehaviorOptions>(options =>
     };
 });
 
+builder.Services.AddAuthorization(opt => {
+    opt.AddPolicy(SD.AdminPolicy, policy => policy.RequireRole(SD.AdminRole));
+    opt.AddPolicy(SD.ManagerPolicy, policy => policy.RequireRole(SD.ManagerRole));
+    opt.AddPolicy(SD.PlayerPolicy, policy => policy.RequireRole(SD.PlayerRole));
+
+    opt.AddPolicy(SD.AdminOrManagerPolicy, policy => policy.RequireRole(SD.AdminRole, SD.ManagerRole));
+    opt.AddPolicy(SD.AdminAndManagerPolicy, policy => policy.RequireRole(SD.AdminRole).RequireRole(SD.ManagerRole));
+    opt.AddPolicy(SD.AllRolePolicy, policy => policy.RequireRole(SD.AdminRole, SD.ManagerRole, SD.PlayerRole));
+
+    opt.AddPolicy(SD.AdminEmailPolicy, policy => policy.RequireClaim(ClaimTypes.Email, SD.AdminEmail));
+    opt.AddPolicy(SD.MillerSurnamePolicy, policy => policy.RequireClaim(ClaimTypes.Surname, SD.MillerSurname));
+    opt.AddPolicy(SD.ManagerEmailAndWilsonSurnamePolicy, policy => policy.RequireClaim(ClaimTypes.Email, SD.ManagerEmail).RequireClaim(ClaimTypes.Surname, SD.WilsonSurname));
+
+    opt.AddPolicy(SD.VipPolicy, policy => policy.RequireAssertion(context => SD.VipPolicyCheck(context)));
+});
+
 var app = builder.Build();
 
 var clientUrl = builder.Configuration["Jwt:ClientUrl"];
@@ -108,5 +129,20 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+#region Context Seed
+using var scope = app.Services.CreateScope();
+try
+{
+    // NuGet Package Manager Console -> Drop-Database
+    var contextSeedService = scope.ServiceProvider.GetService<IContextSeedService>();
+    await contextSeedService.InitializeContextAsync();
+}
+catch(Exception ex)
+{
+    var logger = scope.ServiceProvider.GetService<ILogger<Program>>();
+    logger.LogError(ex.Message, "Failed to initialize and seed the database.");
+}
+#endregion
 
 app.Run();

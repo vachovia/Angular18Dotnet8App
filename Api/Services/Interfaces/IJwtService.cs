@@ -1,9 +1,10 @@
 ﻿using Api.Models;
+using System.Threading.Tasks;
 
 namespace Api.Services.Interfaces
 {
     public interface IJwtService
     {
-        string CreateJwt(AppUser user);
+        Task<string> CreateJwt(AppUser user);
     }
 }

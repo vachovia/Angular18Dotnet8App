@@ -56,7 +56,7 @@ namespace Api.Controllers
                 return Unauthorized("Invalid username or password.");
             }
 
-            var userDto = CreateAppUserDto(user);
+            var userDto = await CreateAppUserDto(user);
 
             return userDto;
         }
@@ -261,20 +261,20 @@ namespace Api.Controllers
 
             var user = await _userManager.FindByNameAsync(userName);
 
-            var userDto = CreateAppUserDto(user);
+            var userDto = await CreateAppUserDto(user);
 
             return userDto;
         }
 
         #region Private Help Methods
 
-        private UserDto CreateAppUserDto(AppUser user)
+        private async Task<UserDto> CreateAppUserDto(AppUser user)
         {
             return new UserDto
             {
                 FirstName = user.FirstName,
                 LastName = user.LastName,
-                Jwt = _jwtService.CreateJwt(user)
+                Jwt = await _jwtService.CreateJwt(user)
             };
         }
 

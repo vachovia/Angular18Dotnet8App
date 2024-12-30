@@ -7,6 +7,9 @@ using System.IdentityModel.Tokens.Jwt;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.Extensions.Configuration;
 using Api.Services.Interfaces;
+using Microsoft.AspNetCore.Identity;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Api.Services
 {
@@ -14,14 +17,16 @@ namespace Api.Services
     {
         private readonly IConfiguration _config;
         private readonly SymmetricSecurityKey _jwtKey;
+        private readonly UserManager<AppUser> _userManager;
 
-        public JwtService(IConfiguration config)
+        public JwtService(IConfiguration config, UserManager<AppUser> userManager)
         {
             _config = config;
+            _userManager = userManager;
             _jwtKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]));
         }
 
-        public string CreateJwt(AppUser user)
+        public async Task<string> CreateJwt(AppUser user)
         {
             var userClaims = new List<Claim>
             {
@@ -30,6 +35,9 @@ namespace Api.Services
                 new Claim(ClaimTypes.GivenName, user.FirstName),
                 new Claim(ClaimTypes.Surname, user.LastName),
             };
+
+            var roles = await _userManager.GetRolesAsync(user);
+            userClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
             var credentials = new SigningCredentials(_jwtKey, SecurityAlgorithms.HmacSha256Signature);
 
