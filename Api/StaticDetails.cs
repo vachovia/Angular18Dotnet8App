@@ -22,6 +22,8 @@ namespace Api
         public const string ManagerEmail = "manager@example.com";
         public const string ManagerEmailAndWilsonSurnamePolicy = "ManagerEmailAndWilsonSurnamePolicy";
         public const string VipPolicy = "VipPolicy";
+        public const string SuperAdminChangeIsNotAllowed = "Super Admin change is not allowed!";
+        public const int MaximumLoginAttempts = 3;
 
         public static bool VipPolicyCheck(AuthorizationHandlerContext context)
         {

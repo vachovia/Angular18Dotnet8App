@@ -51,10 +51,31 @@ namespace Api.Controllers
 
             var result = await _signInManager.CheckPasswordSignInAsync(user, model.Password, false);
 
+            if(result.IsLockedOut)
+            {
+                return Unauthorized(string.Format("Your account has been locked. You should wait until {0} (UTC time) to be able to login.", user.LockoutEnd));
+            }
+
             if(!result.Succeeded)
             {
+                if(!user.UserName.Equals(SD.AdminEmail))
+                {
+                    await _userManager.AccessFailedAsync(user);
+                }
+
+                if(user.AccessFailedCount >= SD.MaximumLoginAttempts)
+                {
+                    await _userManager.SetLockoutEndDateAsync(user, DateTime.UtcNow.AddMinutes(1));
+
+                    return Unauthorized(string.Format("Your account has been locked. You should wait until {0} (UTC time) to be able to login.", user.LockoutEnd));
+                }
+
                 return Unauthorized("Invalid username or password.");
             }
+
+            await _userManager.ResetAccessFailedCountAsync(user);
+
+            await _userManager.SetLockoutEndDateAsync(user, null);
 
             var userDto = await CreateAppUserDto(user);
 
@@ -86,6 +107,8 @@ namespace Api.Controllers
             {
                 return BadRequest(result.Errors);
             }
+
+            await _userManager.AddToRoleAsync(userToAdd, SD.PlayerRole);
 
             // Added to confirm email address
             try
@@ -266,7 +289,7 @@ namespace Api.Controllers
             return userDto;
         }
 
-        #region Private Help Methods
+        #region Private Helper Methods
 
         private async Task<UserDto> CreateAppUserDto(AppUser user)
         {
