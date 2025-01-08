@@ -7,6 +7,7 @@ import {Store} from '@ngrx/store';
 import {accountActions} from './../../../account/store/actions';
 import {jwtDecode} from 'jwt-decode';
 import {AppJwtPayload, UserInterface, Nullable} from './../../types';
+import {environment} from './../../../../environments/environment';
 // import {UserHasRoleDirective} from './../../directives';
  // UserHasRoleDirective] //  *appUserHasRole="['Admin']"
 
@@ -19,8 +20,9 @@ import {AppJwtPayload, UserInterface, Nullable} from './../../types';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin = false;
-  adminRole = 'Admin';
   userSubscription?: Subscription;
+  adminRole = environment.adminRole;
+  
   store = inject(Store);
 
   isAdmin$ = this.store
