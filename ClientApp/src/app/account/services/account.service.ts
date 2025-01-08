@@ -11,7 +11,7 @@ import {
   ResetPasswordInterface,
 } from './../types';
 import {PersistanceService} from './../../shared/services';
-import {environment} from './../../../environments/environment.development';
+import {environment} from './../../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
