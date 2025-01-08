@@ -14,7 +14,7 @@ export class HomeComponent implements OnInit {
   store = inject(Store);
   returnUrl: string | null = null;
   returnUrl$ = this.store.select(selectQueryParam('returnUrl'));
-  sub = this.returnUrl$.subscribe((p) => console.log(p));
+  // sub = this.returnUrl$.subscribe((p) => console.log(p));
 
   counter = signal(0);
 

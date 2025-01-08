@@ -24,6 +24,7 @@
     "@ngrx/store-devtools": "^18.0.2",
     "bootstrap": "^5.3.3",
     "bootswatch": "^5.3.3",
+    "jwt-decode": "^4.0.0",
     "ngx-bootstrap": "^18.0.2",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",

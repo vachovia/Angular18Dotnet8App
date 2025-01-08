@@ -1,7 +1,35 @@
 import {Routes} from '@angular/router';
 import {NotFoundComponent} from './shared/components';
+import {AuthGuard} from './shared/services';
 
 export const routes: Routes = [
+  {
+    path: '',
+    loadChildren: () => import('./home/home.routes').then((m) => m.homeRoutes),
+  },
+  // {
+  //   path: '',
+  //   runGuardsAndResolvers: 'always',
+  //   canActivate: [AuthGuard],
+  //   children: [
+  //     {
+  //       path: 'play',
+  //       loadChildren: () => import('./play/play.routes').then((m) => m.playRoutes),
+  //     },
+  //     {
+  //       path: 'admin',
+  //       loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
+  //     },
+  //   ],
+  // },
+  {
+    path: 'play',
+    loadChildren: () => import('./play/play.routes').then((m) => m.playRoutes),
+  },
+  {
+    path: 'admin',
+    loadChildren: () => import('./admin/admin.routes').then((m) => m.adminRoutes),
+  },
   {
     path: 'register',
     loadChildren: () => import('./account/account.routes').then((m) => m.registerRoutes),
@@ -21,14 +49,6 @@ export const routes: Routes = [
   {
     path: 'reset-password',
     loadChildren: () => import('./account/account.routes').then((m) => m.resetPasswordRoutes),
-  },
-  {
-    path: '',
-    loadChildren: () => import('./home/home.routes').then((m) => m.homeRoutes),
-  },
-  {
-    path: 'play',
-    loadChildren: () => import('./play/play.routes').then((m) => m.playRoutes),
   },
   {
     path: 'not-found',

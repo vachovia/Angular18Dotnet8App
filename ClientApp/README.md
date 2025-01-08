@@ -1,8 +1,10 @@
-ng g c vlad --flat means no folder, --skip-test don't create test file
+ng g c vlad --flat means no folder, --skip-tests don't create test file
 
 ng g guard vlad --skip-tests => generates guard
 
 ng g interceptor vlad --skip-tests => generates interceptor
+
+ng g d vlad --skip-tests
 
 // sync
 this.token = this.route.snapshot.queryParams['token'];
