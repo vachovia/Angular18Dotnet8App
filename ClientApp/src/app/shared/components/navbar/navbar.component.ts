@@ -8,8 +8,9 @@ import {accountActions} from './../../../account/store/actions';
 import {jwtDecode} from 'jwt-decode';
 import {AppJwtPayload, UserInterface, Nullable} from './../../types';
 import {environment} from './../../../../environments/environment';
+
 // import {UserHasRoleDirective} from './../../directives';
- // UserHasRoleDirective] //  *appUserHasRole="['Admin']"
+// UserHasRoleDirective] //  *appUserHasRole="['Admin']"
 
 @Component({
   selector: 'app-navbar',
@@ -22,7 +23,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin = false;
   userSubscription?: Subscription;
   adminRole = environment.adminRole;
-  
+
   store = inject(Store);
 
   isAdmin$ = this.store
