@@ -1,7 +1,7 @@
 import {inject} from '@angular/core';
 import {CanActivateFn, Router} from '@angular/router';
-import {PersistanceService, SharedService} from './';
-import {AppJwtPayload, UserInterface} from './../types';
+import {PersistanceService, SharedService} from './../../shared/services';
+import {AppJwtPayload, UserInterface} from './../../shared/types';
 import {jwtDecode} from 'jwt-decode';
 import {environment} from './../../../environments/environment';
 
@@ -26,7 +26,7 @@ export const AdminGuard: CanActivateFn = (route, state) => {
   }
 
   sharedService.showNotification(false, 'Admin Area', 'Leave Now.');
-  
+
   router.navigateByUrl('/');
 
   return false;
