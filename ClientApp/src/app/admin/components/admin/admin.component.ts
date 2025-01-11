@@ -5,11 +5,12 @@ import {CommonModule} from '@angular/common';
 import { adminActions } from './../../store/actions';
 import { ValidationMessagesComponent } from './../../../shared/components';
 import { selectMembers, selectValidationErrors } from './../../store/reducers';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-admin',
   standalone: true,
-  imports: [CommonModule, ValidationMessagesComponent],
+  imports: [CommonModule, RouterLink, ValidationMessagesComponent],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
 })

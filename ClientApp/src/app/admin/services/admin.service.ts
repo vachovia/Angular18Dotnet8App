@@ -14,7 +14,6 @@ export class AdminService {
 
   getMembers(): Observable<MemberViewInterface[]> {
     const url = `${this.appUrl}/api/admin/get-members`;
-    debugger;
     return this.http.get<MemberViewInterface[]>(url);
   }
 
