@@ -2,11 +2,10 @@ import {Router} from '@angular/router';
 import {Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
-import {UserInterface} from './../../shared/types';
+import {BackendResponseInterface, UserInterface} from './../../shared/types';
 import {
   LoginInterface,
   RegisterInterface,
-  BackendResponseInterface,
   ConfirmEmailInterface,
   ResetPasswordInterface,
 } from './../types';

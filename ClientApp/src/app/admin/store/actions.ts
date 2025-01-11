@@ -13,9 +13,9 @@ export const adminActions = createActionGroup({
     'Get Member Success': props<{member: MemberAddEditInterface}>(),
     'Get Member Failure': props<{errors: BackendErrorsInterface}>(),
 
-    'Get Roles': emptyProps(),
-    'Get Roles Success': props<{roles: string[]}>(),
-    'Get Roles Failure': props<{errors: BackendErrorsInterface}>(),
+    'Get App Roles': emptyProps(),
+    'Get App Roles Success': props<{roles: string[]}>(),
+    'Get App Roles Failure': props<{errors: BackendErrorsInterface}>(),
 
     'Add Edit Member': props<{model: MemberAddEditInterface}>(),
     'Add Edit Member Success': emptyProps(),

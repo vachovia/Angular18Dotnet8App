@@ -1,1 +1,11 @@
-<p>admin works!</p>
+<ng-container *ngIf="data$ | async as data">
+  <p *ngIf="data.members && data.members.length">
+    <li *ngFor="let member of data.members">
+        {{member.firstName}}
+    </li>
+  </p>  
+  <div class="form-floating" *ngIf="data.backendErrors">
+    <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
+  </div>
+</ng-container>
+

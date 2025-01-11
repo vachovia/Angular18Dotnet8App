@@ -2,9 +2,9 @@ import {Component, OnDestroy, OnInit} from '@angular/core';
 import {combineLatest} from 'rxjs';
 import {CommonModule} from '@angular/common';
 import { Store } from '@ngrx/store';
-import {selectPlay, selectValidationErrors} from '../store/reducers';
-import { ValidationMessagesComponent } from '../../shared/components';
-import { playActions } from '../store/actions';
+import {selectPlay, selectValidationErrors} from './../store/reducers';
+import { ValidationMessagesComponent } from './../../shared/components';
+import { playActions } from './../store/actions';
 
 @Component({
   selector: 'app-play',

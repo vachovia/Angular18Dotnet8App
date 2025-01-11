@@ -1,9 +1,9 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from './../../../environments/environment';
 import {HttpClient} from '@angular/common/http';
-import {MemberAddEditInterface, MemberViewInterface} from './../types';
 import {Observable} from 'rxjs';
-import { BackendResponseInterface } from '../../account/types';
+import {MemberAddEditInterface, MemberViewInterface} from './../types';
+import {BackendResponseInterface} from './../../shared/types';
 
 @Injectable({
   providedIn: 'root',
@@ -14,6 +14,7 @@ export class AdminService {
 
   getMembers(): Observable<MemberViewInterface[]> {
     const url = `${this.appUrl}/api/admin/get-members`;
+    debugger;
     return this.http.get<MemberViewInterface[]>(url);
   }
 
@@ -22,7 +23,7 @@ export class AdminService {
     return this.http.get<MemberAddEditInterface>(url);
   }
 
-  getAppRoles(): Observable<String[]> {
+  getAppRoles(): Observable<string[]> {
     const url = `${this.appUrl}/api/admin/get-application-roles`;
     return this.http.get<string[]>(url);
   }

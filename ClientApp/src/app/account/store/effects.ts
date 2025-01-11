@@ -3,11 +3,10 @@ import {Router} from '@angular/router';
 import {Actions, createEffect, ofType} from '@ngrx/effects';
 import {switchMap, map, catchError, of, tap} from 'rxjs';
 import {HttpErrorResponse} from '@angular/common/http';
-import {BackendErrorsInterface, UserInterface} from './../../shared/types/';
+import {BackendErrorsInterface, BackendResponseInterface, UserInterface} from './../../shared/types/';
 import {PersistanceService, SharedService} from './../../shared/services';
 import {AccountService} from './../services/account.service';
 import {accountActions} from './actions';
-import {BackendResponseInterface} from './../types';
 
 export const registerEffect = createEffect(
   (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
