@@ -33,7 +33,73 @@ const adminFeature = createFeature({
       member: null,
       members: [],
       validationErrors: action.errors,
-    })),    
+    })),
+    on(adminActions.lockMember, (state) => ({
+      ...state,
+      isLoading: true,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(adminActions.lockMemberSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      members: state.members.map((m) => {
+        if (m.id === action.id) {
+          m = {...m, isLocked: true};
+        }
+        return m;
+      }),
+    })),
+    on(adminActions.lockMemberFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
+    on(adminActions.unlockMember, (state) => ({
+      ...state,
+      isLoading: true,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(adminActions.unlockMemberSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      members: state.members.map((m) => {
+        if (m.id === action.id) {
+          m = {...m, isLocked: false};
+        }
+        return m;
+      }),
+    })),
+    on(adminActions.lockMemberFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
+
+    on(adminActions.deleteMember, (state) => ({
+      ...state,
+      isLoading: true,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(adminActions.deleteMemberSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      members: state.members.filter((m) => m.id !== action.id),
+    })),
+    on(adminActions.lockMemberFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
+
     on(routerNavigatedAction, (state, action) => ({
       ...state,
       validationErrors: null,

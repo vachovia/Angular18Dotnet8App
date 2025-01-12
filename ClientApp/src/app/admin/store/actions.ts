@@ -22,15 +22,15 @@ export const adminActions = createActionGroup({
     'Add Edit Member Failure': props<{errors: BackendErrorsInterface}>(),
 
     'Lock Member': props<{id: string}>(),
-    'Lock Member Success': emptyProps(),
+    'Lock Member Success': props<{id: string}>(),
     'Lock Member Failure': props<{errors: BackendErrorsInterface}>(),
 
     'Unlock Member': props<{id: string}>(),
-    'Unlock Member Success': emptyProps(),
+    'Unlock Member Success': props<{id: string}>(),
     'Unlock Member Failure': props<{errors: BackendErrorsInterface}>(),
 
     'Delete Member': props<{id: string}>(),
-    'Delete Member Success': emptyProps(),
+    'Delete Member Success': props<{id: string}>(),
     'Delete Member Failure': props<{errors: BackendErrorsInterface}>(),
   },
 });

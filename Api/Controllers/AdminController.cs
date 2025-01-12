@@ -190,7 +190,7 @@ namespace Api.Controllers
             return NoContent();
         }
 
-        [HttpDelete("delete-member")]
+        [HttpDelete("delete-member/{id}")]
         public async Task<IActionResult> DeleteMember(string id)
         {
             var user = await _userManager.FindByIdAsync(id);

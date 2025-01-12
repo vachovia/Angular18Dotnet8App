@@ -125,7 +125,7 @@ export const lockMemberEffect = createEffect(
       switchMap(({id}) => {
         return adminService.lockMember(id).pipe(
           map(() => {
-            return adminActions.lockMemberSuccess();
+            return adminActions.lockMemberSuccess({id});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
             let errorMessages: BackendErrorsInterface = {
@@ -152,7 +152,7 @@ export const unlockMemberEffect = createEffect(
       switchMap(({id}) => {
         return adminService.unlockMember(id).pipe(
           map(() => {
-            return adminActions.unlockMemberSuccess();
+            return adminActions.unlockMemberSuccess({id});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
             let errorMessages: BackendErrorsInterface = {
@@ -179,7 +179,7 @@ export const deleteMemberEffect = createEffect(
       switchMap(({id}) => {
         return adminService.deleteMember(id).pipe(
           map(() => {
-            return adminActions.deleteMemberSuccess();
+            return adminActions.deleteMemberSuccess({id});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
             let errorMessages: BackendErrorsInterface = {
