@@ -80,7 +80,6 @@ const adminFeature = createFeature({
       isSubmitting: false,
       validationErrors: action.errors,
     })),
-
     on(adminActions.deleteMember, (state) => ({
       ...state,
       isLoading: true,
@@ -99,7 +98,6 @@ const adminFeature = createFeature({
       isSubmitting: false,
       validationErrors: action.errors,
     })),
-
     on(routerNavigatedAction, (state, action) => ({
       ...state,
       validationErrors: null,
