@@ -42,7 +42,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   loadMembers() {
     this.membersSubscription = this.members$.subscribe({
       next: (members) => {
-        Object.assign(this.members, members);
+        this.members = JSON.parse(JSON.stringify(members));
       },
     });
   }
@@ -60,6 +60,8 @@ export class AdminComponent implements OnInit, OnDestroy {
   handleLockUnlockFilterAndMessage(id: string, locking: boolean) {
     const member = this.findMember(id);
     if (member) {
+      // works because of copy
+      // member.isLocked = !member.isLocked;
       if (locking) {
         this.sharedService.showNotification(true, 'Locked', `${member?.userName} member has been locked.`);
       } else {
@@ -75,7 +77,6 @@ export class AdminComponent implements OnInit, OnDestroy {
   deleteMember(id: string, template: TemplateRef<any>) {
     const member = this.findMember(id);
     if (member) {
-      console.log(member);
       this.memberToDelete = member;
       this.modalRef = this.modalService.show(template, {class: 'modal-sm'});
     }

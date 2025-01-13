@@ -2,7 +2,7 @@
   <div class="my-3 text-end">
     <a class="btn btn-outline-primary" routerLink="/admin/add-member">Create Member</a>
   </div>
-  <table class="table table-striped table-bordered" *ngIf="members && members.length">
+  <table class="table table-striped table-bordered">
     <thead>
       <tr class="table-warning">
         <th>User Name</th>
@@ -16,7 +16,7 @@
     </thead>
     <tbody>
       <tr *ngIf="!members || !members.length">
-        <td colspan="7" class="text-center">No Members</td>
+        <td colspan="7" class="text-center fst-italic">No Members Found.</td>
       </tr>
       <tr *ngFor="let member of members">
         <td>{{ member.userName }}</td>
