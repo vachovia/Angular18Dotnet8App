@@ -199,14 +199,3 @@ export const deleteMemberEffect = createEffect(
   {functional: true}
 );
 
-export const redirectAfterDeleteMemberEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router)) => {
-    return actions$.pipe(
-      ofType(adminActions.deleteMemberSuccess),
-      tap(() => {
-        router.navigateByUrl('/admin');
-      })
-    );
-  },
-  {functional: true, dispatch: false}
-);

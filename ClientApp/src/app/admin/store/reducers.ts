@@ -34,6 +34,24 @@ const adminFeature = createFeature({
       members: [],
       validationErrors: action.errors,
     })),
+    on(adminActions.getMember, (state) => ({
+      ...state,
+      isLoading: true,
+      validationErrors: null,
+    })),
+    on(adminActions.getMemberSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      member: action.member,
+      members: [],
+    })),
+    on(adminActions.getMemberFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      member: null,
+      members: [],
+      validationErrors: action.errors,
+    })),
     on(adminActions.lockMember, (state) => ({
       ...state,
       isLoading: true,
@@ -74,7 +92,7 @@ const adminFeature = createFeature({
         return m;
       }),
     })),
-    on(adminActions.lockMemberFailure, (state, action) => ({
+    on(adminActions.unlockMemberFailure, (state, action) => ({
       ...state,
       isLoading: false,
       isSubmitting: false,
@@ -92,14 +110,33 @@ const adminFeature = createFeature({
       isSubmitting: false,
       members: state.members.filter((m) => m.id !== action.id),
     })),
-    on(adminActions.lockMemberFailure, (state, action) => ({
+    on(adminActions.deleteMemberFailure, (state, action) => ({
       ...state,
       isLoading: false,
       isSubmitting: false,
       validationErrors: action.errors,
     })),
+    on(adminActions.getAppRoles, (state) => ({
+      ...state,
+      isLoading: true,
+      isSubmitting: false,
+      validationErrors: null,
+    })),
+    on(adminActions.getAppRolesSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      roles: action.roles,
+    })),
+    on(adminActions.getAppRolesFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      roles: [],
+      validationErrors: action.errors,
+    })),
     on(routerNavigatedAction, (state, action) => ({
       ...state,
+      isLoading: false,
+      isSubmitting: false,
       validationErrors: null,
     }))
   ),

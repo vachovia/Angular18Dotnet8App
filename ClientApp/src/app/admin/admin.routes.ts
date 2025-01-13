@@ -1,5 +1,5 @@
 import {Route} from '@angular/router';
-import {AdminComponent} from './components/admin/admin.component';
+import {AdminComponent, AddEditMemberComponent} from './components';
 import { AdminGuard } from './services/admin.guard'; 
 
 export const adminRoutes: Route[] = [
@@ -7,6 +7,10 @@ export const adminRoutes: Route[] = [
     path: '',
     runGuardsAndResolvers: 'always',
     canActivate: [AdminGuard],
-    component: AdminComponent,
+    children: [
+      {path: '', component: AdminComponent},
+      {path: 'add-member', component: AddEditMemberComponent},
+      {path: 'edit-member/:id', component: AddEditMemberComponent},
+    ],
   },
 ];
