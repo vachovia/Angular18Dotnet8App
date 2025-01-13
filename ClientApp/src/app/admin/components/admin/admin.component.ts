@@ -60,7 +60,7 @@ export class AdminComponent implements OnInit, OnDestroy {
   handleLockUnlockFilterAndMessage(id: string, locking: boolean) {
     const member = this.findMember(id);
     if (member) {
-      // works because of copy
+      // works because of copy of members
       // member.isLocked = !member.isLocked;
       if (locking) {
         this.sharedService.showNotification(true, 'Locked', `${member?.userName} member has been locked.`);
