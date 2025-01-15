@@ -10,7 +10,7 @@
             </h1>
           </div>
 
-          <div class="form-floatin mb-3">
+          <div class="form-floating mb-3">
             <input
               formControlName="email"
               type="text"
@@ -27,7 +27,7 @@
             </span>
           </div>
 
-          <div class="form-floatin" *ngIf="data.backendErrors">
+          <div class="form-floating" *ngIf="data.backendErrors">
             <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
           </div>
 

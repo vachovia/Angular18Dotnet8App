@@ -7,8 +7,8 @@ import {BackendErrorsInterface} from './../../shared/types/';
 import {SharedService} from './../../shared/services';
 import {AdminService} from './../services/admin.service';
 import {adminActions} from './actions';
-import { BackendResponseInterface } from './../../shared/types/';
-import { MemberAddEditInterface, MemberViewInterface } from '../types';
+import {BackendResponseInterface} from './../../shared/types/';
+import {MemberAddEditInterface, MemberViewInterface} from '../types';
 
 export const getMembersEffect = createEffect(
   (actions$ = inject(Actions), adminService = inject(AdminService)) => {
@@ -92,12 +92,13 @@ export const getAppRolesEffect = createEffect(
 );
 
 export const addEditMemberEffect = createEffect(
-  (actions$ = inject(Actions), adminService = inject(AdminService)) => {
+  (actions$ = inject(Actions), adminService = inject(AdminService), sharedService = inject(SharedService)) => {
     return actions$.pipe(
       ofType(adminActions.addEditMember),
       switchMap(({model}) => {
         return adminService.addEditMember(model).pipe(
           map((response: BackendResponseInterface) => {
+            sharedService.showNotification(true, response.value.title, response.value.message);
             return adminActions.addEditMemberSuccess();
           }),
           catchError((errorResponse: HttpErrorResponse) => {
@@ -116,6 +117,18 @@ export const addEditMemberEffect = createEffect(
     );
   },
   {functional: true}
+);
+
+export const redirectAfterAddEditMemberEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(adminActions.addEditMemberSuccess),
+      tap(() => {
+        router.navigateByUrl('/admin');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
 );
 
 export const lockMemberEffect = createEffect(
@@ -198,4 +211,3 @@ export const deleteMemberEffect = createEffect(
   },
   {functional: true}
 );
-

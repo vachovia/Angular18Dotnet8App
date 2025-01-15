@@ -134,6 +134,9 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
   submit() {
     this.submitted = true;
     if (this.memberForm.valid) {
+      const model: MemberAddEditInterface = this.memberForm.value;
+      this.store.dispatch(adminActions.addEditMember({model}));
+      console.log(model);
     }
   }
 

@@ -97,6 +97,15 @@ namespace Api.Controllers
                     return BadRequest(ModelState);
                 }
 
+                //if (!string.IsNullOrEmpty(model.Password))
+                //{
+                //    if (model.Password.Length < 6)
+                //    {
+                //        ModelState.AddModelError("errors", "Password must be at least 6 characters");
+                //        return BadRequest(ModelState);
+                //    }
+                //}
+
                 bool isAdmin = IsAdminUserId(model.Id);
 
                 if (isAdmin)

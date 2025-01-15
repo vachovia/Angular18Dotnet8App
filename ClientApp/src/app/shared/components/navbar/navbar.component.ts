@@ -21,6 +21,7 @@ import {environment} from './../../../../environments/environment';
 })
 export class NavbarComponent implements OnInit, OnDestroy {
   isAdmin = false;
+  collapsed = true;
   userSubscription?: Subscription;
   adminRole = environment.adminRole;
 
@@ -55,6 +56,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
       checkRole = decodedToken.role.some((role: any) => role == this.adminRole);
     }
     return checkRole;
+  }
+
+  toggleCollapsed(){
+    this.collapsed = !this.collapsed;
   }
 
   ngOnDestroy(): void {

@@ -2,7 +2,7 @@
   <p *ngIf="data.play && data.play.value && data.play.value.message">
     {{ data.play.value.message }}
   </p>
-  <div class="form-floatin" *ngIf="data.backendErrors">
+  <div class="form-floating" *ngIf="data.backendErrors">
     <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
   </div>
 </ng-container>

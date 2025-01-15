@@ -6,7 +6,7 @@
           <div class="text-center mb-4">
             <h3 class="mb-3 font-weight-normal">Login</h3>
           </div>
-          <div class="form-floatin mb-3">
+          <div class="form-floating mb-3">
             <input
               formControlName="userName"
               type="text"
@@ -20,7 +20,7 @@
             </span>
           </div>
 
-          <div class="form-floatin mb-3">
+          <div class="form-floating mb-3">
             <input
               formControlName="password"
               type="password"
@@ -34,7 +34,7 @@
             </span>
           </div>
 
-          <div class="form-floatin mt-3" *ngIf="data.backendErrors">
+          <div class="form-floating mt-3" *ngIf="data.backendErrors">
             <div class="d-flex justify-content-center align-items-center p-2 mt-3">
               <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
             </div>
