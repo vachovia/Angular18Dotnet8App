@@ -1,6 +1,6 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { BackendErrorsInterface } from '../../../types';
-import { CommonModule } from '@angular/common';
+import {Component, Input, OnInit} from '@angular/core';
+import {BackendErrorsInterface} from '../../../types';
+import {CommonModule} from '@angular/common';
 
 @Component({
   selector: 'app-validation-messages',
@@ -18,7 +18,8 @@ export class ValidationMessagesComponent implements OnInit {
     if (message && message.Errors && Array.isArray(message.Errors)) {
       message = message.Errors.join(',');
     }
-    this.errorMessages.push(`Status: ${this.backendErrors?.status}` );
-    this.errorMessages.push(`Error: ${message}` );    
+
+    this.errorMessages.push(`Error: ${message}`);
+    this.errorMessages.push(`Status: ${this.backendErrors?.status}`);
   }
 }
