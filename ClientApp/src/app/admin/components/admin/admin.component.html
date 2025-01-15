@@ -39,7 +39,7 @@
       </tr>
     </tbody>
   </table>
-  <div class="form-floating" *ngIf="data.backendErrors">
+  <div class="form-floatin" *ngIf="data.backendErrors">
     <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
   </div>
   <div class="my-3 text-end">
@@ -49,8 +49,8 @@
 
 <ng-template #template>
   <div class="modal-body text-center">
-    <p>Are you sure you want to delete {{memberToDelete?.userName}}?</p>
-    <button type="button" class="btn btn-default" (click)="confirm()" >Yes</button>
-    <button type="button" class="btn btn-primary" (click)="decline()" >No</button>
+    <p>Are you sure you want to delete {{ memberToDelete?.userName }}?</p>
+    <button type="button" class="btn btn-default" (click)="confirm()">Yes</button>
+    <button type="button" class="btn btn-primary" (click)="decline()">No</button>
   </div>
 </ng-template>
