@@ -1,8 +1,8 @@
 <ng-container *ngIf="data$ | async as data">
-  <div class="my-3 text-end">
-    <a class="btn btn-outline-primary" routerLink="/admin/add-member">Create Member</a>
+  <div class="my-4 text-center" *ngIf="members && members.length">
+    <h3>List of Members</h3>
   </div>
-  <table class="table table-striped table-bordered">
+  <table class="table table-striped table-bordered my-4">
     <thead>
       <tr class="table-warning">
         <th>User Name</th>
@@ -41,6 +41,9 @@
   </table>
   <div class="form-floating" *ngIf="data.backendErrors">
     <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
+  </div>
+  <div class="my-3 text-end">
+    <a class="btn btn-outline-primary" routerLink="/admin/add-member">Create Member</a>
   </div>
 </ng-container>
 

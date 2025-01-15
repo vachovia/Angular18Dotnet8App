@@ -3,7 +3,7 @@ import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {combineLatest, Subscription} from 'rxjs';
 import {Store} from '@ngrx/store';
-import {FormBuilder, FormGroup, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ValidationMessagesComponent} from './../../../shared/components';
 import {
   selectIsLoading,
@@ -19,7 +19,7 @@ import {MemberAddEditInterface} from './../../types';
 @Component({
   selector: 'app-add-edit-member',
   standalone: true,
-  imports: [CommonModule, RouterLink, ValidationMessagesComponent],
+  imports: [CommonModule, RouterLink, ReactiveFormsModule, ValidationMessagesComponent],
   templateUrl: './add-edit-member.component.html',
   styleUrl: './add-edit-member.component.scss',
 })
@@ -64,6 +64,8 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
   }
 
   initializeForm(member: MemberAddEditInterface | null) {
+    this.formInitialized = true;
+    
     if (member) {
       this.memberForm = this.formBuilder.group({
         id: [member.id],
@@ -86,8 +88,6 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
         roles: ['', Validators.required],
       });
     }
-
-    this.formInitialized = true;
   }
 
   loadMemberAndRoles() {
@@ -102,6 +102,10 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
         this.initializeForm(this.existingMember);
       },
     });
+  }
+
+  submit(){
+
   }
 
   ngOnDestroy(): void {
