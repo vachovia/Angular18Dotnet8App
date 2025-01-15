@@ -44,7 +44,7 @@ namespace Api.Controllers
                     Roles = await _userManager.GetRolesAsync(user),
                     IsLocked = await _userManager.IsLockedOutAsync(user),
                     // IsLocked = _userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
-                    // Azure doesn't like GetAwaiter() ???                    
+                    // Azure doesn't like ? GetAwaiter() when we do users.Select(user => new MemberViewDto {...})                  
                 };
                 members.Add(member);
             }
