@@ -284,6 +284,13 @@ namespace Api.Controllers
 
             var user = await _userManager.FindByNameAsync(userName);
 
+            var isUserLocked = await _userManager.IsLockedOutAsync(user);
+
+            if (isUserLocked)
+            {
+                return Unauthorized(string.Format("Your account has been locked. You should wait until {0} (UTC time) to be able to login.", user.LockoutEnd));
+            }
+
             var userDto = await CreateAppUserDto(user);
 
             return userDto;

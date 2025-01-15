@@ -28,16 +28,26 @@ namespace Api.Controllers
         [HttpGet("get-members")]
         public async Task<ActionResult<IEnumerable<MemberViewDto>>> GetMembers()
         {
-            var members = await _userManager.Users.Where(u => u.UserName != SD.AdminEmail).Select(member => new MemberViewDto
+            List<MemberViewDto> members = new();
+
+            var users = await _userManager.Users.Where(u => u.UserName != SD.AdminEmail).ToListAsync();
+
+            foreach (var user in users)
             {
-                Id = member.Id,
-                UserName = member.UserName,
-                FirstName = member.FirstName,
-                LastName = member.LastName,                
-                DateCreated = member.DateCreated,
-                IsLocked = _userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
-                Roles = _userManager.GetRolesAsync(member).GetAwaiter().GetResult(),
-            }).ToListAsync();
+                var member = new MemberViewDto
+                {
+                    Id = user.Id,
+                    UserName = user.UserName,
+                    FirstName = user.FirstName,
+                    LastName = user.LastName,
+                    DateCreated = user.DateCreated,
+                    Roles = await _userManager.GetRolesAsync(user),
+                    IsLocked = await _userManager.IsLockedOutAsync(user),
+                    // IsLocked = _userManager.IsLockedOutAsync(member).GetAwaiter().GetResult(),
+                    // Azure doesn't like GetAwaiter() ???                    
+                };
+                members.Add(member);
+            }
 
             return Ok(members);
         }
@@ -45,14 +55,16 @@ namespace Api.Controllers
         [HttpGet("get-member/{id}")]
         public async Task<ActionResult<MemberAddEditDto>> GetMember(string id)
         {
-            var member = await _userManager.Users.Where(u => u.UserName != SD.AdminEmail && u.Id == id).Select(member => new MemberAddEditDto
+            var user = await _userManager.Users.Where(u => u.UserName != SD.AdminEmail && u.Id == id).FirstOrDefaultAsync();
+
+            var member = new MemberAddEditDto
             {
-                Id = member.Id,
-                UserName = member.UserName,
-                FirstName = member.FirstName,
-                LastName = member.LastName,
-                Roles = string.Join(",", _userManager.GetRolesAsync(member).GetAwaiter().GetResult()),
-            }).FirstOrDefaultAsync();
+                Id = user.Id,
+                UserName = user.UserName,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
+                Roles = string.Join(",", await _userManager.GetRolesAsync(user)),
+            };
 
             return Ok(member);
         }

@@ -84,6 +84,7 @@ export const getCurrentUserEffect = createEffect(
   (
     actions$ = inject(Actions),
     accountService = inject(AccountService),
+    sharedService = inject(SharedService),
     persistanceService = inject(PersistanceService)
   ) => {
     return actions$.pipe(
@@ -98,7 +99,12 @@ export const getCurrentUserEffect = createEffect(
           map((currentUser: UserInterface) => {
             return accountActions.getCurrentUserSuccess({currentUser});
           }),
-          catchError(() => {
+          catchError((errorResponse: HttpErrorResponse) => {
+            let message = errorResponse.error || '';
+            if (message && message.Errors && Array.isArray(message.Errors)) {
+              message = message.Errors.join(',');
+            }            
+            sharedService.showNotification(false, 'Access Blocked', message);
             return of(accountActions.getCurrentUserFailure());
           })
         );
