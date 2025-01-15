@@ -14,7 +14,11 @@ export class ValidationMessagesComponent implements OnInit {
   errorMessages: string[] = [];
 
   ngOnInit(): void {
+    let message = this.backendErrors?.message || '';
+    if (message && message.Errors && Array.isArray(message.Errors)) {
+      message = message.Errors.join(',');
+    }
     this.errorMessages.push(`Status: ${this.backendErrors?.status}` );
-    this.errorMessages.push(`Error: ${this.backendErrors?.message}` );    
+    this.errorMessages.push(`Error: ${message}` );    
   }
 }

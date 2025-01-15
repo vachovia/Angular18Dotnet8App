@@ -85,7 +85,7 @@
           </div>
           <div class="col-11">
             <div class="btn-group w-100">
-              <ng-container *ngFor="let role of appRoles">
+              <ng-container *ngFor="let role of data.appRoles">
                 <input
                   type="checkbox"
                   class="btn-check"
@@ -102,9 +102,9 @@
         <div class="text-danger" *ngIf="submitted && memberForm.get('roles')?.hasError('required')">
           Please select at least one role.
         </div>
-
-        <div class="form-floating" *ngIf="data.backendErrors">
-          <app-validation-messages [backendErrors]="data.backendErrors"></app-validation-messages>
+        
+        <div class="form-floating" *ngIf="backendErrors">
+          <app-validation-messages [backendErrors]="backendErrors"></app-validation-messages>
         </div>
 
         <div class="row my-4">

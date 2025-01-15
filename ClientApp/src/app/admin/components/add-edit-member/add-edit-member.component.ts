@@ -15,6 +15,7 @@ import {
 import {adminActions} from './../../store/actions';
 import {SharedService} from './../../../shared/services';
 import {MemberAddEditInterface} from './../../types';
+import {BackendErrorsInterface} from '../../../shared/types';
 
 @Component({
   selector: 'app-add-edit-member',
@@ -33,20 +34,20 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
   addNew = true;
   submitted = false;
   formInitialized = false;
-  appRoles: string[] = [];
+  backendErrors: BackendErrorsInterface | null = null;
   existingMemberRoles: string[] = [];
   memberForm: FormGroup = new FormGroup({});
-  rolesSubscription?: Subscription;
   memberSubscription?: Subscription;
+  backendErrorsSubscription?: Subscription;
   existingMember: MemberAddEditInterface | null = null;
 
-  roles$ = this.store.select(selectRoles);
   member$ = this.store.select(selectMember);
+  backendErrors$ = this.store.select(selectValidationErrors);
 
   data$ = combineLatest({
+    appRoles: this.store.select(selectRoles),
     isLoading: this.store.select(selectIsLoading),
     isSubmitting: this.store.select(selectIsSubmitting),
-    backendErrors: this.store.select(selectValidationErrors),
   });
 
   ngOnInit(): void {
@@ -64,9 +65,9 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
   }
 
   loadMemberAndRoles() {
-    this.rolesSubscription = this.roles$.subscribe({
-      next: (roles) => {
-        this.appRoles = JSON.parse(JSON.stringify(roles));
+    this.backendErrorsSubscription = this.backendErrors$.subscribe({
+      next: (errors) => {
+        this.backendErrors = JSON.parse(JSON.stringify(errors));
       },
     });
     this.memberSubscription = this.member$.subscribe({
@@ -136,12 +137,11 @@ export class AddEditMemberComponent implements OnInit, OnDestroy {
     if (this.memberForm.valid) {
       const model: MemberAddEditInterface = this.memberForm.value;
       this.store.dispatch(adminActions.addEditMember({model}));
-      console.log(model);
     }
   }
 
   ngOnDestroy(): void {
-    this.rolesSubscription?.unsubscribe();
     this.memberSubscription?.unsubscribe();
+    this.backendErrorsSubscription?.unsubscribe();
   }
 }

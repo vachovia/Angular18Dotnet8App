@@ -133,6 +133,24 @@ const adminFeature = createFeature({
       roles: [],
       validationErrors: action.errors,
     })),
+    on(adminActions.addEditMember, (state) => ({
+      ...state,
+      isLoading: true,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(adminActions.addEditMemberSuccess, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      validationErrors: null,
+    })),
+    on(adminActions.addEditMemberFailure, (state, action) => ({
+      ...state,
+      isLoading: false,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
     on(routerNavigatedAction, (state, action) => ({
       ...state,
       isLoading: false,

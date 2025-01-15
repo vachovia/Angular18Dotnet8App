@@ -90,21 +90,12 @@ namespace Api.Controllers
             }
             else
             {
-                if (string.IsNullOrEmpty(model.Password) || model.Password.Length < 8 || model.Password.Length > 15)
+                if (!string.IsNullOrEmpty(model.Password) && (model.Password.Length < 8 || model.Password.Length > 15))
                 {
                     ModelState.AddModelError("Errors", string.Format("Password must be at least {0}, and maximum {1} characters", 8, 15));
 
                     return BadRequest(ModelState);
                 }
-
-                //if (!string.IsNullOrEmpty(model.Password))
-                //{
-                //    if (model.Password.Length < 6)
-                //    {
-                //        ModelState.AddModelError("errors", "Password must be at least 6 characters");
-                //        return BadRequest(ModelState);
-                //    }
-                //}
 
                 bool isAdmin = IsAdminUserId(model.Id);
 
