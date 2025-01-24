@@ -10,5 +10,8 @@ namespace Api.Data
         {
             
         }
+
+        // After adding we need to Add/Update-Migration
+        public DbSet<RefreshToken> RefreshTokens { get; set; }
     }
 }

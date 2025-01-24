@@ -10,6 +10,7 @@ using Api.Services.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography;
 
 namespace Api.Services
 {
@@ -44,7 +45,7 @@ namespace Api.Services
             var tokenDescriptor = new SecurityTokenDescriptor
             {
                 Subject = new ClaimsIdentity(userClaims),
-                Expires = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:ExpiresInDays"])),
+                Expires = DateTime.UtcNow.AddMinutes(int.Parse(_config["Jwt:ExpiresInMins"])),
                 SigningCredentials = credentials,
                 Issuer = _config["Jwt:Issuer"]
             };
@@ -56,6 +57,22 @@ namespace Api.Services
             var token = tokenHandler.WriteToken(jwt);
 
             return token;
+        }
+
+        public RefreshToken CreateRefreshToken(AppUser user)
+        {
+            var token = new byte[32];
+            using var randomNoGenerator = RandomNumberGenerator.Create();
+            randomNoGenerator.GetBytes(token);
+
+            var refreshToken = new RefreshToken()
+            {
+                Token = Convert.ToBase64String(token),
+                AppUser = user,
+                DateExpiresUtc = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpiresInDays"])),
+            };
+
+            return refreshToken;
         }
     }
 }

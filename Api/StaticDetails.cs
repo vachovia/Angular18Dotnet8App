@@ -24,6 +24,7 @@ namespace Api
         public const string VipPolicy = "VipPolicy";
         public const string SuperAdminChangeIsNotAllowed = "Super Admin change is not allowed!";
         public const int MaximumLoginAttempts = 3;
+        public const string IdentityAppRefreshToken = "IdentityAppRefreshToken";
 
         public static bool VipPolicyCheck(AuthorizationHandlerContext context)
         {
