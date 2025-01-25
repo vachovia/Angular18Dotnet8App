@@ -65,11 +65,13 @@ namespace Api.Services
             using var randomNoGenerator = RandomNumberGenerator.Create();
             randomNoGenerator.GetBytes(token);
 
+            int refreshTokenDays = int.Parse(_config["Jwt:RefreshTokenExpiresInDays"]);
+
             var refreshToken = new RefreshToken()
             {
                 Token = Convert.ToBase64String(token),
                 AppUser = user,
-                DateExpiresUtc = DateTime.UtcNow.AddDays(int.Parse(_config["Jwt:RefreshTokenExpiresInDays"])),
+                DateExpiresUtc = DateTime.UtcNow.AddDays(refreshTokenDays),
             };
 
             return refreshToken;
