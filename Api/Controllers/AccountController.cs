@@ -328,7 +328,7 @@ namespace Api.Controllers
             return userDto;
         }
 
-        #region Depricated
+        #region Depricated Endpoint
         [Authorize]
         [HttpGet("refresh-user-token")]
         public async Task<ActionResult<UserDto>> RefreshUserToken()
