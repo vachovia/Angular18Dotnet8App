@@ -279,29 +279,7 @@ namespace Api.Controllers
             {
                 return BadRequest("Invalid token. Please try again.");
             }
-        }
-
-        #region Depricated
-        [Authorize]
-        [HttpGet("refresh-user-token")]
-        public async Task<ActionResult<UserDto>> RefreshUserToken()
-        {
-            var userName = User.FindFirst(ClaimTypes.Email)?.Value;
-
-            var user = await _userManager.FindByNameAsync(userName);
-
-            var isUserLocked = await _userManager.IsLockedOutAsync(user);
-
-            if (isUserLocked)
-            {
-                return Unauthorized(string.Format("Your account has been locked. You should wait until {0} (UTC time) to be able to login.", user.LockoutEnd));
-            }
-
-            var userDto = await CreateAppUserDto(user);
-
-            return userDto;
-        }
-        #endregion
+        }        
 
         [Authorize]
         [HttpPost("refresh-token")]
@@ -349,6 +327,28 @@ namespace Api.Controllers
 
             return userDto;
         }
+
+        #region Depricated
+        [Authorize]
+        [HttpGet("refresh-user-token")]
+        public async Task<ActionResult<UserDto>> RefreshUserToken()
+        {
+            var userName = User.FindFirst(ClaimTypes.Email)?.Value;
+
+            var user = await _userManager.FindByNameAsync(userName);
+
+            var isUserLocked = await _userManager.IsLockedOutAsync(user);
+
+            if (isUserLocked)
+            {
+                return Unauthorized(string.Format("Your account has been locked. You should wait until {0} (UTC time) to be able to login.", user.LockoutEnd));
+            }
+
+            var userDto = await CreateAppUserDto(user);
+
+            return userDto;
+        }
+        #endregion
 
         #region Private Helper Methods
 
