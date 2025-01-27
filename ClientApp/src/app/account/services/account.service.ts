@@ -20,7 +20,6 @@ export class AccountService {
   store = inject(Store);
   router = inject(Router);
   http = inject(HttpClient);
-  sharedService = inject(SharedService);
   persistanceService = inject(PersistanceService);
 
   register(data: RegisterInterface): Observable<BackendResponseInterface> {
