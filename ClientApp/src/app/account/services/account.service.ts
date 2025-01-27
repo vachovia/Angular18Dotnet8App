@@ -57,7 +57,7 @@ export class AccountService {
     return this.http.put<BackendResponseInterface>(url, data);
   }
 
-  getCurrentUser0(jwt: string): Observable<UserInterface> {
+  getCurrentUserInit(jwt: string): Observable<UserInterface> {
     let headers = new HttpHeaders();
     headers = headers.set('Authorization', 'Bearer ' + jwt);
     const url = `${this.appUrl}/api/account/refresh-user-token`;
