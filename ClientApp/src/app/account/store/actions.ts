@@ -33,8 +33,10 @@ export const accountActions = createActionGroup({
     'Get Current User Success': props<{currentUser: UserInterface}>(),
     'Get Current User Failure': emptyProps(),
 
-    'Refresh User Token': props<{currentUser: UserInterface}>(),
+    'Refresh User Token': emptyProps(),
+    'Refresh User Token Success': props<{currentUser: UserInterface}>(),
+    'Refresh User Token Failure': emptyProps(),
 
-    'Logout': emptyProps(),
+    Logout: emptyProps(),
   },
 });

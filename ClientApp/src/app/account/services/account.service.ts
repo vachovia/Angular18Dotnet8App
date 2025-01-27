@@ -57,7 +57,7 @@ export class AccountService {
     return this.http.put<BackendResponseInterface>(url, data);
   }
 
-  getCurrentUserInit(jwt: string): Observable<UserInterface> {
+  getCurrentUserDepricated(jwt: string): Observable<UserInterface> {
     let headers = new HttpHeaders();
     headers = headers.set('Authorization', 'Bearer ' + jwt);
     const url = `${this.appUrl}/api/account/refresh-user-token`;
@@ -86,26 +86,18 @@ export class AccountService {
     const expires = new Date(decodedToken.exp! * 1000);
     // 30 secs before expiration
     const timeout = expires.getTime() - Date.now() - 30 * 1000;
-    this.refreshTokenTimeout = setTimeout(() => this.createRefreshToken(jwt), timeout);
+    this.refreshTokenTimeout = setTimeout(() => this.dispatchRefreshToken(), timeout);
   }
 
-  createRefreshToken(jwt: string): void {
+  dispatchRefreshToken() {
+    this.store.dispatch(accountActions.refreshUserToken());
+  }
+
+  createRefreshToken(jwt: string): Observable<UserInterface> {
     let headers = new HttpHeaders();
     headers = headers.set('Authorization', 'Bearer ' + jwt);
     const url = `${this.appUrl}/api/account/refresh-token`;
-    this.http
-      .post<UserInterface>(url, {}, {headers})
-      .pipe(map(this.getUser))
-      .subscribe({
-        next: (currentUser: UserInterface) => {
-          this.setCurrentUser(currentUser);
-          this.store.dispatch(accountActions.refreshUserToken({currentUser}));
-        },
-        error: (error) => {
-          this.sharedService.showNotification(false, 'Error', error.error);
-          this.logout();
-        },
-      });
+    return this.http.post<UserInterface>(url, {}, {headers}).pipe(map(this.getUser));
   }
 
   logout() {

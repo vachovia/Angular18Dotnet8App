@@ -114,10 +114,16 @@ const accountFeature = createFeature({
       isSubmitting: false,
       validationErrors: action.errors,
     })),
-    on(accountActions.refreshUserToken, (state, action) => ({
+    on(accountActions.refreshUserToken, (state) => ({
       ...state,
-      isLoading: false,
+    })),
+    on(accountActions.refreshUserTokenSuccess, (state, action) => ({
+      ...state,
       currentUser: action.currentUser,
+    })),
+    on(accountActions.refreshUserTokenFailure, (state) => ({
+      ...state,
+      currentUser: null,
     })),
     on(accountActions.logout, (state) => ({
       ...state,

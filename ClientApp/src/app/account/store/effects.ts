@@ -269,8 +269,55 @@ export const redirectAfterResetPasswordEffect = createEffect(
   {functional: true, dispatch: false}
 );
 
+export const createRefreshTokenEffect = createEffect(
+  (
+    actions$ = inject(Actions),
+    accountService = inject(AccountService),
+    sharedService = inject(SharedService),
+    persistanceService = inject(PersistanceService)
+  ) => {
+    return actions$.pipe(
+      ofType(accountActions.refreshUserToken),
+      switchMap(() => {
+        const user = persistanceService.get();
+        if (!user) {
+          return of(accountActions.refreshUserTokenFailure());
+        }
+        const jwt = (<UserInterface>user).jwt;
+        return accountService.createRefreshToken(jwt).pipe(
+          map((currentUser: UserInterface) => {
+            accountService.setCurrentUser(currentUser);
+            return accountActions.refreshUserTokenSuccess({currentUser});
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let message = errorResponse.error || '';
+            if (message && message.Errors && Array.isArray(message.Errors)) {
+              message = message.Errors.join(',');
+            }
+            sharedService.showNotification(false, 'Access Blocked', message);
+            return of(accountActions.refreshUserTokenFailure());
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const redirectAfterRefreshTokenFailureEffect = createEffect(
+  (actions$ = inject(Actions), accountService = inject(AccountService)) => {
+    return actions$.pipe(
+      ofType(accountActions.refreshUserTokenFailure),
+      tap(() => {
+        accountService.logout();
+      })
+    );
+  },
+  {functional: true, dispatch: false}
+);
+
 export const logoutEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router), persistanceService = inject(PersistanceService), accountService = inject(AccountService),) => {
+  (actions$ = inject(Actions), accountService = inject(AccountService)) => {
     return actions$.pipe(
       ofType(accountActions.logout),
       tap(() => {
