@@ -114,6 +114,11 @@ const accountFeature = createFeature({
       isSubmitting: false,
       validationErrors: action.errors,
     })),
+    on(accountActions.refreshUserToken, (state, action) => ({
+      ...state,
+      isLoading: false,
+      currentUser: action.currentUser,
+    })),
     on(accountActions.logout, (state) => ({
       ...state,
       ...initialState,

@@ -59,7 +59,8 @@ export const loginEffect = createEffect(
       switchMap(({request}) => {
         return accountService.login(request).pipe(
           map((currentUser: UserInterface) => {
-            persistanceService.set(currentUser);
+            // persistanceService.set(currentUser);
+            accountService.setCurrentUser(currentUser);
             return accountActions.loginSuccess({currentUser});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
@@ -97,6 +98,8 @@ export const getCurrentUserEffect = createEffect(
         const jwt = (<UserInterface>user).jwt;
         return accountService.getCurrentUser(jwt).pipe(
           map((currentUser: UserInterface) => {
+            // persistanceService.set(currentUser);
+            accountService.setCurrentUser(currentUser);
             return accountActions.getCurrentUserSuccess({currentUser});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
@@ -267,12 +270,11 @@ export const redirectAfterResetPasswordEffect = createEffect(
 );
 
 export const logoutEffect = createEffect(
-  (actions$ = inject(Actions), router = inject(Router), persistanceService = inject(PersistanceService)) => {
+  (actions$ = inject(Actions), router = inject(Router), persistanceService = inject(PersistanceService), accountService = inject(AccountService),) => {
     return actions$.pipe(
       ofType(accountActions.logout),
       tap(() => {
-        persistanceService.clear();
-        router.navigateByUrl('/');
+        accountService.logout();
       })
     );
   },

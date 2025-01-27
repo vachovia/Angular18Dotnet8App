@@ -5,11 +5,11 @@ import {UserInterface, BackendErrorsInterface} from './../../shared/types/';
 export const accountActions = createActionGroup({
   source: 'account',
   events: {
-    'Register': props<{request: RegisterInterface}>(),
+    Register: props<{request: RegisterInterface}>(),
     'Register Success': emptyProps(),
     'Register Failure': props<{errors: BackendErrorsInterface}>(),
 
-    'Login': props<{request: LoginInterface}>(),
+    Login: props<{request: LoginInterface}>(),
     'Login Success': props<{currentUser: UserInterface}>(),
     'Login Failure': props<{errors: BackendErrorsInterface}>(),
 
@@ -33,6 +33,8 @@ export const accountActions = createActionGroup({
     'Get Current User Success': props<{currentUser: UserInterface}>(),
     'Get Current User Failure': emptyProps(),
 
-    Logout: emptyProps(),
+    'Refresh User Token': props<{currentUser: UserInterface}>(),
+
+    'Logout': emptyProps(),
   },
 });

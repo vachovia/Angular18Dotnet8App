@@ -74,7 +74,8 @@
           "options": {
             "sslCert": "ssl/localhost.pem",
             "sslKey": "ssl/localhost-key.pem",
-            "ssl": true
+            "ssl": true,
+            "proxyConfig": "src/proxy.conf.json"
           },
           "configurations": {
             "production": {

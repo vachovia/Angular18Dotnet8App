@@ -117,7 +117,7 @@ var clientUrl = builder.Configuration["Jwt:ClientUrl"];
 
 app.UseCors(options =>
 {
-    options.AllowAnyMethod().AllowAnyHeader().WithOrigins(clientUrl).WithExposedHeaders("*");
+    options.AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins(clientUrl).WithExposedHeaders("*");
 });
 
 if (app.Environment.IsDevelopment())

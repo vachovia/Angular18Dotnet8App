@@ -1,6 +1,6 @@
 export const environment = {
   production: true,
-  appUrl: 'http://localhost:5111',
+  appUrl: 'api',
   userKey: 'identityAppUser',
   adminRole: 'Admin'
 };

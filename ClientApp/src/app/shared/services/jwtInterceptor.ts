@@ -12,6 +12,7 @@ export const jwtInterceptor: HttpInterceptorFn = (request, next) => {
     setHeaders: {
       Authorization: jwt,
     },
+    withCredentials: true
   });
 
   return next(request);
