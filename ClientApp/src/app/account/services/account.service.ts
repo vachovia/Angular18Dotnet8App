@@ -14,12 +14,17 @@ import {accountActions} from '../store/actions';
   providedIn: 'root',
 })
 export class AccountService {
-  refreshTokenTimeout: any;
   appUrl: string = environment.appUrl;
+  idleTimeout: number = environment.idleTimeout;
+
+  timeoutId: any;
+  refreshTokenTimeout: any;
+  displayingExpiringSessionModal = false;
 
   store = inject(Store);
   router = inject(Router);
   http = inject(HttpClient);
+  sharedService = inject(SharedService);
   persistanceService = inject(PersistanceService);
 
   register(data: RegisterInterface): Observable<BackendResponseInterface> {
@@ -74,6 +79,9 @@ export class AccountService {
     this.stopRefreshTokenTimer();
     this.persistanceService.set(currentUser);
     this.startRefreshTokenTimer(currentUser.jwt);
+
+    this.displayingExpiringSessionModal = false;
+    this.checkUserIdleTimeout(currentUser);
   }
 
   stopRefreshTokenTimer() {
@@ -97,6 +105,17 @@ export class AccountService {
     headers = headers.set('Authorization', 'Bearer ' + jwt);
     const url = `${this.appUrl}/api/account/refresh-token`;
     return this.http.post<UserInterface>(url, {}, {headers}).pipe(map(this.getUser));
+  }
+
+  checkUserIdleTimeout(currentUser: UserInterface) {
+    if (currentUser) {
+      if (!this.displayingExpiringSessionModal) {
+        this.timeoutId = setTimeout(() => {
+          this.displayingExpiringSessionModal = true;
+          this.sharedService.openExpiringSessionCountDown();
+        }, this.idleTimeout);
+      }
+    }
   }
 
   logout() {
