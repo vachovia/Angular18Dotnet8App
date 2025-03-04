@@ -5,6 +5,7 @@ import {
   RegisterComponent,
   ResetPasswordComponent,
   SendEmailComponent,
+  RegisterWithThirdPartyComponent,
 } from './components/';
 
 export const registerRoutes: Route[] = [{path: '', component: RegisterComponent}];
@@ -16,3 +17,5 @@ export const confirmEmailRoutes: Route[] = [{path: '', component: ConfirmEmailCo
 export const sendEmailRoutes: Route[] = [{path: '', component: SendEmailComponent}];
 
 export const resetPasswordRoutes: Route[] = [{path: '', component: ResetPasswordComponent}];
+
+export const thirdPartyRoutes: Route[] = [{path: '', component: RegisterWithThirdPartyComponent}];

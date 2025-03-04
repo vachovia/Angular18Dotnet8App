@@ -51,6 +51,10 @@ export const routes: Routes = [
     loadChildren: () => import('./account/account.routes').then((m) => m.resetPasswordRoutes),
   },
   {
+    path: 'third-party/:provider',
+    loadChildren: () => import('./account/account.routes').then((m) => m.thirdPartyRoutes),
+  },
+  {
     path: 'not-found',
     loadChildren: () => import('./shared/components/errors/not-found/not-found.routes').then((m) => m.notFoundRoutes),
   },

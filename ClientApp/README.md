@@ -23,3 +23,7 @@ this.route.queryParamMap.subscribe({
 choco install mkcert
 // then this in ssl folder
 mkcert localhost
+
+// For Facebook added script:
+// <script async defer crossorigin="anonymous" src="https://connect.facebook.net/en_US/sdk.js#xfbml=1&version=v22.0&appId=1177824133842884"></script>
+// On Register page added FB global variable which have already decalred in the script above

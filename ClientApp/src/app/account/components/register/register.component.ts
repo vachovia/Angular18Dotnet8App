@@ -1,4 +1,4 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {ValidationMessagesComponent} from './../../../shared/components';
 import {CommonModule} from '@angular/common';
@@ -7,6 +7,9 @@ import {RegisterInterface} from '../../types';
 import {Store} from '@ngrx/store';
 import {accountActions} from './../../store/actions';
 import {selectIsSubmitting, selectValidationErrors} from './../../store/reducers';
+import { SharedService } from './../../../shared/services';
+import { Router } from '@angular/router';
+declare const FB: any;
 
 @Component({
   selector: 'app-register',
@@ -19,6 +22,9 @@ export class RegisterComponent implements OnInit {
   // replace by is Submitting if possible
   submitted: boolean = false;
   registerForm: FormGroup = new FormGroup({});
+
+  router = inject(Router);
+  sharedService = inject(SharedService);
 
   data$ = combineLatest({
     isSubmitting: this.store.select(selectIsSubmitting),
@@ -46,5 +52,19 @@ export class RegisterComponent implements OnInit {
       const request: RegisterInterface = this.registerForm.getRawValue();
       this.store.dispatch(accountActions.register({request: request}));
     }
+  }
+
+  registerWithFacebook() {
+    FB.login(async (fbResult: any) => {
+      console.log(fbResult);
+      if (fbResult.authResponse) {
+        const accessToken = fbResult.authResponse.accessToken;
+        const userId = fbResult.authResponse.userID;
+        this.router.navigateByUrl(`/third-party/facebook?access_token=${accessToken}&userId=${userId}`);
+      } else {
+        this.sharedService.showNotification(false, 'Failed', "Unable to register with your Facebook");
+        console.log('User cancelled login or did not fully authorize.');
+      }
+    });
   }
 }
