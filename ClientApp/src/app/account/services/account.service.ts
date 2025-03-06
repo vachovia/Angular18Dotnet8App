@@ -3,7 +3,13 @@ import {inject, Injectable} from '@angular/core';
 import {map, Observable} from 'rxjs';
 import {HttpClient, HttpHeaders} from '@angular/common/http';
 import {AppJwtPayload, BackendResponseInterface, UserInterface} from './../../shared/types';
-import {LoginInterface, RegisterInterface, ConfirmEmailInterface, ResetPasswordInterface} from './../types';
+import {
+  LoginInterface,
+  RegisterInterface,
+  ConfirmEmailInterface,
+  ResetPasswordInterface,
+  RegisterWithExternalClass,
+} from './../types';
 import {PersistanceService, SharedService} from './../../shared/services';
 import {environment} from './../../../environments/environment';
 import {jwtDecode} from 'jwt-decode';
@@ -29,6 +35,11 @@ export class AccountService {
 
   register(data: RegisterInterface): Observable<BackendResponseInterface> {
     const url = `${this.appUrl}/api/account/register`;
+    return this.http.post<BackendResponseInterface>(url, data);
+  }
+
+  registerWithThirdParty(data: RegisterWithExternalClass): Observable<BackendResponseInterface> {
+    const url = `${this.appUrl}/api/account/register-with-third-party`;
     return this.http.post<BackendResponseInterface>(url, data);
   }
 
