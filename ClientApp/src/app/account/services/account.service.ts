@@ -38,9 +38,9 @@ export class AccountService {
     return this.http.post<BackendResponseInterface>(url, data);
   }
 
-  registerWithThirdParty(data: RegisterWithExternalClass): Observable<BackendResponseInterface> {
+  registerWithThirdParty(data: RegisterWithExternalClass): Observable<UserInterface> {
     const url = `${this.appUrl}/api/account/register-with-third-party`;
-    return this.http.post<BackendResponseInterface>(url, data);
+    return this.http.post<UserInterface>(url, data).pipe(map(this.getUser));
   }
 
   login(data: LoginInterface): Observable<UserInterface> {

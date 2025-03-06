@@ -2,6 +2,7 @@
 using Api.DTOs.Account;
 using Api.Models;
 using Api.Services.Interfaces;
+using Google.Apis.Auth;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -9,9 +10,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Diagnostics.HealthChecks;
-using Newtonsoft.Json.Linq;
 using System;
+using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
@@ -27,9 +29,10 @@ namespace Api.Controllers
         private readonly IJwtService _jwtService;
         private readonly IEmailService _emailService;
         private readonly UserManager<AppUser> _userManager;
-        private readonly SignInManager<AppUser> _signInManager;        
+        private readonly SignInManager<AppUser> _signInManager;
+        private readonly IHttpClientFactory _httpClientFactory;
 
-        public AccountController(IJwtService jwtService, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailService emailService, IConfiguration config, AppDbContext dbContext)
+        public AccountController(IJwtService jwtService, SignInManager<AppUser> signInManager, UserManager<AppUser> userManager, IEmailService emailService, IConfiguration config, IHttpClientFactory httpClientFactory, AppDbContext dbContext)
         {
             _config = config;
             _dbContext = dbContext;
@@ -37,6 +40,7 @@ namespace Api.Controllers
             _signInManager = signInManager;
             _userManager = userManager;
             _emailService = emailService;
+            _httpClientFactory = httpClientFactory;
         }
 
         [HttpPost("Login")]
@@ -87,6 +91,48 @@ namespace Api.Controllers
             return userDto;
         }
 
+        [HttpPost("login-with-third-party")]
+        public async Task<ActionResult<UserDto>> LoginWithThirdParty(LoginWithExternalDto model)
+        {
+            if (model.Provider.Equals(SD.Facebook))
+            {
+                try
+                {
+                    if (!FacebookValidatedAsync(model.AccessToken, model.UserId).GetAwaiter().GetResult())
+                    {
+                        return Unauthorized("Unable to login with facebook");
+                    }
+                }
+                catch (Exception)
+                {
+                    return Unauthorized("Unable to login with facebook");
+                }
+            }
+            else if (model.Provider.Equals(SD.Google))
+            {
+                try
+                {
+                    if (!GoogleValidatedAsync(model.AccessToken, model.UserId).GetAwaiter().GetResult())
+                    {
+                        return Unauthorized("Unable to login with google");
+                    }
+                }
+                catch (Exception)
+                {
+                    return Unauthorized("Unable to login with google");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid provider");
+            }
+
+            var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == model.UserId && x.Provider == model.Provider);
+            if (user == null) return Unauthorized("Unable to find your account");
+
+            return await CreateAppUserDto(user);
+        }
+
         [HttpPost("Register")]
         public async Task<IActionResult> Register(RegisterDto model)
         {
@@ -133,6 +179,71 @@ namespace Api.Controllers
             }
 
             // return Ok(new JsonResult(new { title = "Account Created", message = "Your account has been created, you can login." }));
+        }
+
+        [HttpPost("register-with-third-party")]
+        public async Task<ActionResult<UserDto>> RegisterWithThirdParty(RegisterWithExternalDto model)
+        {
+            if (model.Provider.Equals(SD.Facebook))
+            {
+                try
+                {
+                    if (!FacebookValidatedAsync(model.AccessToken, model.UserId).GetAwaiter().GetResult())
+                    {
+                        return Unauthorized("Unable to register with facebook");
+                    }
+                }
+                catch (Exception)
+                {
+                    return Unauthorized("Unable to register with facebook");
+                }
+            }
+            else if (model.Provider.Equals(SD.Google))
+            {
+                try
+                {
+                    if (!GoogleValidatedAsync(model.AccessToken, model.UserId).GetAwaiter().GetResult())
+                    {
+                        return Unauthorized("Unable to register with google");
+                    }
+                }
+                catch (Exception)
+                {
+                    return Unauthorized("Unable to register with google");
+                }
+            }
+            else
+            {
+                return BadRequest("Invalid provider");
+            }
+
+            var user = await _userManager.FindByNameAsync(model.UserId);
+
+            if (user != null)
+            {
+                return BadRequest(string.Format("You have an account already. Please login with your {0}", model.Provider));
+            }
+
+            var userToAdd = new AppUser
+            {
+                FirstName = model.FirstName.ToLower(),
+                LastName = model.LastName.ToLower(),
+                UserName = model.UserId,
+                Provider = model.Provider,
+                Email = $"{model.UserId}@facebook.com"
+                // Email is null in this case and UserName is used as the provider's user id not email
+            };
+
+            var result = await _userManager.CreateAsync(userToAdd);
+
+            if (!result.Succeeded)
+            {
+                return BadRequest(string.Join(",", result.Errors.Select(e => e.Description).ToList()));
+            }
+
+            await _userManager.AddToRoleAsync(userToAdd, SD.PlayerRole);
+
+            return await CreateAppUserDto(userToAdd);
         }
 
         [HttpPut("confirm-email")]
@@ -456,6 +567,61 @@ namespace Api.Controllers
             if (fetchRefreshToken is null) return false;
 
             if(fetchRefreshToken.IsExpired) return false;
+
+            return true;
+        }
+
+        private async Task<bool> FacebookValidatedAsync(string accessToken, string userId)
+        {
+            var facebookKeys = _config["Facebook:AppId"] + "|" + _config["Facebook:AppSecret"];
+
+            // var _facebookHttpClient = _httpClientFactory.CreateClient("FacebookAPI");
+
+            var _facebookHttpClient = _httpClientFactory.CreateClient();
+            _facebookHttpClient.BaseAddress = new Uri("https://graph.facebook.com");
+
+            var fbResult = await _facebookHttpClient.GetFromJsonAsync<FacebookResultDto>($"debug_token?input_token={accessToken}&access_token={facebookKeys}");
+
+            if (fbResult == null || fbResult.Data.Is_Valid == false || !fbResult.Data.User_Id.Equals(userId))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        private async Task<bool> GoogleValidatedAsync(string accessToken, string userId)
+        {
+            var payload = await GoogleJsonWebSignature.ValidateAsync(accessToken);
+
+            if (!payload.Audience.Equals(_config["Google:ClientId"]))
+            {
+                return false;
+            }
+
+            if (!payload.Issuer.Equals("accounts.google.com") && !payload.Issuer.Equals("https://accounts.google.com"))
+            {
+                return false;
+            }
+
+            if (payload.ExpirationTimeSeconds == null)
+            {
+                return false;
+            }
+
+            DateTime now = DateTime.Now.ToUniversalTime();
+
+            DateTime expiration = DateTimeOffset.FromUnixTimeSeconds((long)payload.ExpirationTimeSeconds).DateTime;
+
+            if (now > expiration)
+            {
+                return false;
+            }
+
+            if (!payload.Subject.Equals(userId))
+            {
+                return false;
+            }
 
             return true;
         }

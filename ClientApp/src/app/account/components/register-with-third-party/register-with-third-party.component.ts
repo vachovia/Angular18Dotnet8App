@@ -8,6 +8,7 @@ import {Store} from '@ngrx/store';
 import {RegisterWithExternalClass} from '../../types';
 import {ValidationMessagesComponent} from '../../../shared/components';
 import {CommonModule} from '@angular/common';
+import { accountActions } from '../../store/actions';
 
 @Component({
   selector: 'app-register-with-third-party',
@@ -79,7 +80,7 @@ export class RegisterWithThirdPartyComponent implements OnInit, OnDestroy {
       const firstName = this.registerForm.get('firstName')?.value;
       const lastName = this.registerForm.get('lastName')?.value;
       const model = new RegisterWithExternalClass(firstName, lastName, this.userId, this.access_token, this.provider);
-      // this.store.dispatch(registerWithThirdParty(model));
+      this.store.dispatch(accountActions.registerWithThirdParty({request: model}));
     }
   }
 

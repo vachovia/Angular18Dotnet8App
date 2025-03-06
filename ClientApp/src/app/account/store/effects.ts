@@ -48,6 +48,45 @@ export const redirectAfterRegisterEffect = createEffect(
   {functional: true, dispatch: false}
 );
 
+export const registerWithThirdPartyEffect = createEffect(
+  (actions$ = inject(Actions), accountService = inject(AccountService), sharedService = inject(SharedService)) => {
+    return actions$.pipe(
+      ofType(accountActions.registerWithThirdParty),
+      switchMap(({request}) => {
+        return accountService.registerWithThirdParty(request).pipe(
+          map((currentUser: UserInterface) => {           
+            return accountActions.registerWithThirdPartySuccess({currentUser});
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };
+            return of(
+              accountActions.registerWithThirdPartyFailure({
+                errors: errorMessages,
+              })
+            );
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const redirectAfterRegisterWithThirdPartyEffect = createEffect(
+  (actions$ = inject(Actions), router = inject(Router)) => {
+    return actions$.pipe(
+      ofType(accountActions.registerWithThirdPartySuccess),
+      tap(() => {
+        router.navigateByUrl('/login');
+      })
+    );
+  },
+  {functional: true, dispatch: false}
+);
+
 export const loginEffect = createEffect(
   (
     actions$ = inject(Actions),

@@ -18,6 +18,9 @@ namespace Api.Models
 
         public DateTime DateCreated { get; set; } = DateTime.UtcNow;
 
+        [Column(TypeName = "nvarchar(16)")]
+        public string Provider { get; set; }
+
         public ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
     }
 }

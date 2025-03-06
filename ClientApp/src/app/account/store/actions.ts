@@ -1,5 +1,5 @@
 import {createActionGroup, emptyProps, props} from '@ngrx/store';
-import {RegisterInterface, LoginInterface, ConfirmEmailInterface, ResetPasswordInterface} from './../types';
+import {RegisterInterface, LoginInterface, ConfirmEmailInterface, ResetPasswordInterface, RegisterWithExternalClass} from './../types';
 import {UserInterface, BackendErrorsInterface} from './../../shared/types/';
 
 export const accountActions = createActionGroup({
@@ -8,6 +8,10 @@ export const accountActions = createActionGroup({
     Register: props<{request: RegisterInterface}>(),
     'Register Success': emptyProps(),
     'Register Failure': props<{errors: BackendErrorsInterface}>(),
+
+    'Register With Third Party': props<{request: RegisterWithExternalClass}>(),
+    'Register With Third Party Success': props<{currentUser: UserInterface}>(),
+    'Register With Third Party Failure': props<{errors: BackendErrorsInterface}>(),
 
     Login: props<{request: LoginInterface}>(),
     'Login Success': props<{currentUser: UserInterface}>(),

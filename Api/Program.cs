@@ -1,23 +1,23 @@
+using Api;
+using System;
+using Api.Data;
+using Api.Models;
+using System.Linq;
+using System.Text;
+using Api.Settings;
+using Api.Services;
+using System.Security.Claims;
+using Api.Services.Interfaces;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-using Api.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Api.Models;
 using Microsoft.AspNetCore.Identity;
-using System;
-using Api.Services;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using System.Text;
-using System.Linq;
-using Microsoft.AspNetCore.Mvc;
-using Api.Services.Interfaces;
-using Api.Settings;
-using Microsoft.Extensions.Logging;
-using Api;
-using System.Security.Claims;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -111,6 +111,12 @@ builder.Services.AddAuthorization(opt => {
     opt.AddPolicy(SD.VipPolicy, policy => policy.RequireAssertion(context => SD.VipPolicyCheck(context)));
 });
 
+// Added package Microsoft.AspNetCore.Http.Extension
+builder.Services.AddHttpClient("FacebookAPI", client =>
+{
+    client.BaseAddress = new Uri("https://graph.facebook.com");
+});
+
 var app = builder.Build();
 
 var clientUrl = builder.Configuration["Jwt:ClientUrl"];
@@ -131,7 +137,12 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
+// is going to look for index.html and serving our api application using index.html
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.MapControllers();
+// app.MapFallbackToController("Index", "Fallback");
 
 #region Context Seed
 using var scope = app.Services.CreateScope();
@@ -151,6 +162,6 @@ catch(Exception ex)
 app.Run();
 
 
-// Add-Migration AddingUserToDatabase -o Data/Migrations
+// Add-Migration AddingUserToDatabase -o Data/Migrations // To undo this action, use Remove-Migration. (Before Update-Database action)
 // Update-Database
 // Drop-Database

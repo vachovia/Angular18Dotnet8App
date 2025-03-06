@@ -19,7 +19,7 @@ namespace Api.DTOs.Admin
 
         public string Password { get; set; }
 
-        [Required]
+        [Required] // eg: "Admin,Player,Manager"
         public string Roles { get; set; } = string.Empty;
     }
 }
