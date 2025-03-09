@@ -19,7 +19,7 @@
                 >Home</a
               >
             </li>
-            <li class="nav-item">
+            <li class="nav-item" *ngIf="data.currentUser">
               <a class="nav-link text-white" routerLink="/play" routerLinkActive="active">Play</a>
             </li>
             <li class="nav-item" *ngIf="isAdmin">
