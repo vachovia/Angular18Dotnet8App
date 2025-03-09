@@ -429,7 +429,7 @@ namespace Api.Controllers
         {
             var userName = User.FindFirst(ClaimTypes.Email)?.Value;
 
-            var user = await _userManager.FindByNameAsync(userName);
+            var user = await _userManager.FindByEmailAsync(userName);
 
             var isUserLocked = await _userManager.IsLockedOutAsync(user);
 
