@@ -54,7 +54,9 @@ export const registerWithThirdPartyEffect = createEffect(
       ofType(accountActions.registerWithThirdParty),
       switchMap(({request}) => {
         return accountService.registerWithThirdParty(request).pipe(
-          map((currentUser: UserInterface) => {           
+          map((currentUser: UserInterface) => {
+            accountService.setCurrentUser(currentUser);
+            sharedService.showNotification(true, 'Account Registered', 'Welcome to our website');
             return accountActions.registerWithThirdPartySuccess({currentUser});
           }),
           catchError((errorResponse: HttpErrorResponse) => {
@@ -80,7 +82,7 @@ export const redirectAfterRegisterWithThirdPartyEffect = createEffect(
     return actions$.pipe(
       ofType(accountActions.registerWithThirdPartySuccess),
       tap(() => {
-        router.navigateByUrl('/login');
+        router.navigateByUrl('/');
       })
     );
   },
@@ -106,9 +108,40 @@ export const loginEffect = createEffect(
             let errorMessages: BackendErrorsInterface = {
               status: errorResponse.status,
               message: errorResponse.error,
-            };            
+            };
             return of(
               accountActions.loginFailure({
+                errors: errorMessages,
+              })
+            );
+          })
+        );
+      })
+    );
+  },
+  {functional: true}
+);
+
+export const loginWithThirdpartyEffect = createEffect(
+  (
+    actions$ = inject(Actions),
+    accountService = inject(AccountService),
+  ) => {
+    return actions$.pipe(
+      ofType(accountActions.loginWithThirdParty),
+      switchMap(({request}) => {
+        return accountService.loginWithThirdParty(request).pipe(
+          map((currentUser: UserInterface) => {
+            accountService.setCurrentUser(currentUser);
+            return accountActions.loginWithThirdPartySuccess({currentUser});
+          }),
+          catchError((errorResponse: HttpErrorResponse) => {
+            let errorMessages: BackendErrorsInterface = {
+              status: errorResponse.status,
+              message: errorResponse.error,
+            };
+            return of(
+              accountActions.loginWithThirdPartyFailure({
                 errors: errorMessages,
               })
             );
@@ -145,7 +178,7 @@ export const getCurrentUserEffect = createEffect(
             let message = errorResponse.error || '';
             if (message && message.Errors && Array.isArray(message.Errors)) {
               message = message.Errors.join(',');
-            }            
+            }
             sharedService.showNotification(false, 'Access Blocked', message);
             return of(accountActions.getCurrentUserFailure());
           })

@@ -9,6 +9,7 @@ import {
   ConfirmEmailInterface,
   ResetPasswordInterface,
   RegisterWithExternalClass,
+  LoginWithExternalClass,
 } from './../types';
 import {PersistanceService, SharedService} from './../../shared/services';
 import {environment} from './../../../environments/environment';
@@ -45,6 +46,11 @@ export class AccountService {
 
   login(data: LoginInterface): Observable<UserInterface> {
     const url = `${this.appUrl}/api/account/login`;
+    return this.http.post<UserInterface>(url, data).pipe(map(this.getUser));
+  }
+
+  loginWithThirdParty(data: LoginWithExternalClass): Observable<UserInterface> {
+    const url = `${this.appUrl}/api/account/login-with-third-party`;
     return this.http.post<UserInterface>(url, data).pipe(map(this.getUser));
   }
 

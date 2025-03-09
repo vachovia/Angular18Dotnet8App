@@ -37,7 +37,7 @@ const accountFeature = createFeature({
     on(accountActions.registerWithThirdPartySuccess, (state, action) => ({
       ...state,
       isSubmitting: false,
-      currentUser: null,
+      currentUser: action.currentUser,
     })),
     on(accountActions.registerWithThirdPartyFailure, (state, action) => ({
       ...state,
@@ -55,6 +55,21 @@ const accountFeature = createFeature({
       currentUser: action.currentUser,
     })),
     on(accountActions.loginFailure, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      validationErrors: action.errors,
+    })),
+    on(accountActions.loginWithThirdParty, (state) => ({
+      ...state,
+      isSubmitting: true,
+      validationErrors: null,
+    })),
+    on(accountActions.loginWithThirdPartySuccess, (state, action) => ({
+      ...state,
+      isSubmitting: false,
+      currentUser: action.currentUser,
+    })),
+    on(accountActions.loginWithThirdPartyFailure, (state, action) => ({
       ...state,
       isSubmitting: false,
       validationErrors: action.errors,

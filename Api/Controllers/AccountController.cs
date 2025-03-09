@@ -128,7 +128,11 @@ namespace Api.Controllers
             }
 
             var user = await _userManager.Users.FirstOrDefaultAsync(x => x.UserName == model.UserId && x.Provider == model.Provider);
-            if (user == null) return Unauthorized("Unable to find your account");
+
+            if (user == null)
+            {
+                return Unauthorized("Unable to find your account");
+            } 
 
             return await CreateAppUserDto(user);
         }
@@ -230,8 +234,8 @@ namespace Api.Controllers
                 LastName = model.LastName.ToLower(),
                 UserName = model.UserId,
                 Provider = model.Provider,
-                Email = $"{model.UserId}@facebook.com"
-                // Email is null in this case and UserName is used as the provider's user id not email
+                Email = $"{model.UserId}@facebook.com" // nullable field but...
+                // Required Unique Email so why cannot save when email is null
             };
 
             var result = await _userManager.CreateAsync(userToAdd);

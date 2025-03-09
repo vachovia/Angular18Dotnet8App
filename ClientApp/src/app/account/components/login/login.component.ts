@@ -5,10 +5,12 @@ import {CommonModule} from '@angular/common';
 import {Store} from '@ngrx/store';
 import {combineLatest, Subscription} from 'rxjs';
 import {selectCurrentUser, selectIsSubmitting, selectValidationErrors} from './../../store/reducers';
-import {LoginInterface} from '../../types';
+import {LoginInterface, LoginWithExternalClass} from './../../types';
 import {accountActions} from '../../store/actions';
 import {ActivatedRoute, Params, Router, RouterLink} from '@angular/router';
-import {UserInterface} from '../../../shared/types';
+import {UserInterface} from './../../../shared/types';
+import { SharedService } from './../../../shared/services';
+declare const FB: any;
 
 @Component({
   selector: 'app-login',
@@ -29,6 +31,7 @@ export class LoginComponent implements OnInit, OnDestroy {
   });
 
   router = inject(Router);
+  sharedService = inject(SharedService);
   activatedRoute = inject(ActivatedRoute);
 
   constructor(private formBuilder: FormBuilder, private store: Store) {}
@@ -70,9 +73,24 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.router.navigateByUrl('/send-email/resend-email-confirmation-link');
   }
 
-  forgotUsernameOrPassword(): void{
+  forgotUsernameOrPassword(): void {
     this.router.navigateByUrl('/send-email/forgot-username-or-password');
-  };
+  }
+
+  loginWithFacebook() {
+    FB.login(async (fbResult: any) => {
+      console.log(fbResult);
+      if (fbResult.authResponse) {
+        const accessToken = fbResult.authResponse.accessToken;
+        const userId = fbResult.authResponse.userID;
+        const model = new LoginWithExternalClass(userId, accessToken, 'facebook');
+        this.store.dispatch(accountActions.loginWithThirdParty({request: model}));
+      } else {
+        this.sharedService.showNotification(false, 'Failed', 'Unable to login with your Facebook');
+        console.log('User cancelled login or did not fully authorize.');
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     this.currentUserSubscription?.unsubscribe();
