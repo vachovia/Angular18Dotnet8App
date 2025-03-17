@@ -234,7 +234,7 @@ namespace Api.Controllers
                 LastName = model.LastName.ToLower(),
                 UserName = model.UserId,
                 Provider = model.Provider,
-                Email = $"{model.UserId}@facebook.com" // nullable field but...
+                Email = model.Provider.Equals(SD.Facebook) ? $"{model.UserId}@facebook.com" : $"{model.UserId}@google.com" // nullable field but...
                 // Required Unique Email so why cannot save when email is null
             };
 

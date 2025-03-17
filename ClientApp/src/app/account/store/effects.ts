@@ -123,10 +123,7 @@ export const loginEffect = createEffect(
 );
 
 export const loginWithThirdpartyEffect = createEffect(
-  (
-    actions$ = inject(Actions),
-    accountService = inject(AccountService),
-  ) => {
+  (actions$ = inject(Actions), accountService = inject(AccountService)) => {
     return actions$.pipe(
       ofType(accountActions.loginWithThirdParty),
       switchMap(({request}) => {
@@ -178,6 +175,11 @@ export const getCurrentUserEffect = createEffect(
             let message = errorResponse.error || '';
             if (message && message.Errors && Array.isArray(message.Errors)) {
               message = message.Errors.join(',');
+            }            
+            else if (errorResponse.status === 401) {
+              message = errorResponse.statusText;
+              sharedService.showNotification(false, 'Access Blocked', message);
+              return of(accountActions.logout());
             }
             sharedService.showNotification(false, 'Access Blocked', message);
             return of(accountActions.getCurrentUserFailure());

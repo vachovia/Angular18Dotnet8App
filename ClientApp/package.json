@@ -22,6 +22,7 @@
     "@ngrx/router-store": "^18.0.2",
     "@ngrx/store": "^18.0.2",
     "@ngrx/store-devtools": "^18.0.2",
+    "@types/google-one-tap": "^1.2.6",
     "bootstrap": "^5.3.3",
     "bootswatch": "^5.3.3",
     "jwt-decode": "^4.0.0",
